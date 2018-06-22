@@ -1,0 +1,11 @@
+@import '../../styles/colors.scss';
+
+#pool-app {
+    max-width: 1160px;
+    margin: 0 auto;
+    min-height: calc(100vh - 8rem);
+}
+
+.pool__app--color {
+    background: white;
+}

@@ -1,0 +1,132 @@
+@import '../../styles/fonts.scss';
+@import '../../styles/colors.scss';
+
+#pool-home {
+    padding: 0 2% 2% 2%;
+
+    .pool-features {
+        height: 30rem;
+        color: $darkTextColor;
+        margin: 2rem 1%;
+
+        .features__title {
+            text-align: left;
+            margin: 1em 0;
+        }
+        .features__block {
+            width: 40%;
+            padding: .3rem;
+            float: left;
+            list-style-type: none;
+
+            ul {
+                list-style-type: none;
+                padding: 0;
+
+                li {
+                    font-size: $paragraph;
+                    padding: 1.1rem 0 0 0;
+                }
+            }
+        }
+
+        .last__block {
+            width: 60%;
+            float: right;
+
+            ul {
+                list-style-type: none;
+                padding: 0;
+                li {
+                    height: 2rem;
+                    padding: 0.45rem;
+                    .height {
+                        width: 10%;
+                        float: left;
+                    }
+                }
+            }
+
+            .last__block__content {
+                padding: 0.5rem;
+
+                li:hover {
+                    background: $backgroundColor;
+                    opacity: 0.7;
+                    color: $textColor;
+                }
+            }
+
+            .last__block__content--bgColor  {
+                background: $textColor;
+            }
+        }
+    }
+
+    .mineSection__title {
+        text-align: left;
+    }
+
+    .instruction__block > div {
+
+        h4 {
+            margin-left: 1rem;
+        }
+
+        p, pre {
+            margin-left: 2rem;
+        }
+    }
+
+    .instruction__block {
+        .instruction__block--section-title, .instruction__title, p {
+            color: $darkTextColor;
+        }
+        .instruction__block--section-title {
+            margin: 35px 0 25px 0;
+            font-family: MyriadSemiBold;
+        }
+        .instruction__title {
+            margin-top: 30px;
+            margin-bottom: 15px;
+        }
+
+        ol {
+            padding-left: 2rem;
+            li {
+                line-height: 1.4;
+                margin-bottom: 0.7rem;
+                color: $darkTextColor;
+                a {
+                    text-decoration: underline;
+                    margin: 0 5px;
+                    color: #00619E;
+                }
+                .code__block {
+                    margin-top: 0.7rem;
+                }
+            }
+
+            .code {
+                padding: .3em .3em .1em .3em;
+                margin: 0 3px;
+                font-weight: 600;
+                font-size: 95%;
+                background: #d0d6e0;
+                border-radius: 1px;
+            }
+        }
+    }
+}
+
+@media only screen and (max-width: 650px) {
+    #pool-home {
+        .pool-features {
+            height: auto;
+            overflow: hidden;
+            .features__block, .last__block {
+                width: 100%;
+            }
+        }
+    }
+}

@@ -1,0 +1,39 @@
+
+@import '../../styles/fonts.scss';
+@import '../../styles/colors.scss';
+
+.minerDetailsPage {
+  padding: 0 1rem 4rem 1rem;
+  margin-bottom: 0.5rem;
+
+  .paymentsTable {
+    max-width: 60.3rem;
+    margin: auto;
+  }
+
+  .table_section_title, .chartLabel {
+    font-weight: 600;
+    text-align: center;
+    padding: 1rem;
+    margin: 2.5rem 0;
+    color: $darkTextColor;
+  }
+
+  p {
+    text-align: center;
+  }
+
+  .statsBoxes {
+    margin-top: 0;
+  }
+
+  .page_subtitle {
+    font-size: $h1Sub;
+    text-align: center;
+    color: $darkTextColor;
+    h2 {
+      word-wrap: break-word;
+      color: #106ba3;
+    }
+  }
+}

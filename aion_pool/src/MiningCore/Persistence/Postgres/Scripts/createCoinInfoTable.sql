@@ -1,0 +1,9 @@
+CREATE TABLE IF NOT EXISTS coin_info
+(
+	cointype TEXT PRIMARY KEY NOT NULL,
+	name TEXT NOT NULL,
+	coinmarketcapid INT NOT NULL,
+	priceusd DOUBLE PRECISION NOT NULL,
+	pricebtc DOUBLE PRECISION NOT NULL,
+	updated TIMESTAMP NOT NULL
+);

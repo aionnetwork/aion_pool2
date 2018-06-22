@@ -1,0 +1,248 @@
+@import "../../styles/colors.scss";
+
+.page-error {
+  background: #c30202;
+  color: white;
+  text-align: center;
+  transition: all .4s ease-in-out;
+  height: 0;
+  line-height: 30px;
+
+  &.visible {
+    height: 30px;
+  }
+}
+
+#pool-nav {
+  background: $backgroundColor;
+  color: $textColor;
+  max-width: 1160px;
+  margin: 0 auto;
+  position: sticky;
+  top: 0;
+  height: 4rem;
+  padding-left: 1rem;
+  padding-right: 0;
+  box-shadow: none;
+
+  .desktop__logo {
+    display: block;
+  }
+
+  .mobile__logo {
+    display: none;
+  }
+
+  .pt-navbar-heading {
+    margin-top: 1rem;
+  }
+
+  .nav__search--field {
+    margin-top: 1.1rem;
+
+    input {
+      border-radius: .6rem;
+      font-weight: 600;
+    }
+  }
+
+  .desktop__menu {
+    list-style-type: none;
+    display: inline-flex;
+    margin-top: 3rem;
+
+    li {
+      margin-right: 2rem;
+
+      span {
+        bottom: -3px;
+        position: relative;
+        padding-bottom: 3px;
+      }
+    }
+  }
+
+  a {
+    font-size: 1rem;
+    line-height: normal;
+    color: $menuItemColor;
+    text-decoration: none;
+    font-weight: 600;
+    transition: .3s;
+
+    &:hover {
+      color: $menuItemColorHover;
+    }
+
+    &:focus {
+      outline: none;
+    }
+
+    .menu-icons {
+      -webkit-background-size: contain;
+      -moz-background-size: contain;
+      -o-background-size: contain;
+      background-size: contain;
+      display: inline-block;
+      height: 1.5rem;
+      width: 1.5rem;
+      margin-right: .5rem;
+    }
+
+    .menu__label {
+      float: right;
+      margin-top: 4px;
+    }
+
+    .active {
+      width: 0;
+      height: 0;
+      border-left: .5rem solid transparent;
+      border-right: .5rem solid transparent;
+      border-bottom: .5rem solid white;
+      bottom: -0.7rem;
+      position: relative;
+      left: 5%;
+    }
+  }
+
+  .pt-navbar-group:first-child {
+    width: 20%;
+
+    .pool__logo {
+      width: 6.5rem;
+    }
+
+    .desktop__logo {
+      display: block;
+    }
+
+    .mobile__logo {
+      display: none;
+    }
+  }
+
+  .mobile__menu {
+    .side-menu {
+      padding: 0;
+      margin: 0;
+      font-size: 0;
+      position: absolute;
+      top: 60px;
+      opacity: .95;
+      overflow: hidden;
+      -webkit-transition: all .3s ease-in-out;
+      transition: all .3s ease-in-out;
+      background: $backgroundColor;
+      width: 100%;
+      display: none;
+    }
+
+    #menu-button {
+      display: none;
+    }
+
+    #menu-button:checked+.menu-wrap .side-menu {
+      left: 0;
+      display: block;
+    }
+
+    .menu__label {
+      float: left;
+    }
+
+    .menu-button--label {
+      color: white;
+      padding-left: .6rem;
+      text-align: center;
+      line-height: 0;
+      cursor: pointer;
+      position: absolute;
+      right: .5rem;
+      top: 1.5rem;
+
+      span {
+        font-size: 1.5rem;
+      }
+    }
+
+    .side-menu--list a {
+      color: #fff;
+      display: block;
+      text-decoration: none;
+      height: 3rem;
+      display: none;
+      color: $menuItemColor;
+
+      &:hover {
+        color: $menuItemColorHover;
+      }
+
+      .active {
+        display: none;
+      }
+    }
+
+    .side-menu--list {
+      list-style: none;
+      padding-left: 2rem;
+      margin: 0 auto;
+    }
+  }
+}
+@media only screen and (min-width: 350px) and (max-width: 830px) {
+  #pool-nav {
+    padding-left: 0;
+
+    .desktop__menu {
+      list-style-type: none;
+      display: inline-flex;
+      margin-top: 3rem;
+
+      li {
+        margin-right: 0;
+
+        a {
+          display: none;
+        }
+      }
+    }
+
+    .mobile__menu {
+      display: block;
+
+      span {
+        float: left;
+      }
+
+      .side-menu--list {
+        padding-top: 1rem;
+
+        a {
+          display: block;
+        }
+      }
+
+    }
+
+    .pt-navbar-group:first-child {
+      .desktop__logo {
+        display: none;
+      }
+
+      .mobile__logo {
+        display: block;
+        height: 3rem;
+        width: 3rem;
+        margin-left: .5rem;
+      }
+    }
+
+    .pt-navbar-group:nth-child(2) {
+      .nav__search--field {
+        right: 2.5rem;
+        width: 15rem;
+      }
+    }
+  }
+}

@@ -1,0 +1,29 @@
+@import "styles/colors.scss";
+@import "styles/fonts.scss";
+
+.chartRegion {
+    text-align: center;
+    margin-bottom: 0.5rem;
+    border-bottom: 0.2rem solid $backgroundColor;
+}
+
+.chartWrapper .nv-chart{
+    height: 20rem;
+}
+
+.chartWrapper .nv-legend-text {
+    fill: $darkTextColor;
+}
+
+.chartLabel {
+  text-align: center;
+  padding: .4rem;
+  margin: 1.5rem 0;
+  color: $darkTextColor;
+}
+
+@media only screen and (min-width: 350px) and (max-width: 830px) {
+  .chartWrapper .nv-chart {
+    pointer-events: none;
+  }
+}

@@ -1,0 +1,3 @@
+export const GET_POOLS_START = "GET_POOLS_START";
+export const GET_POOLS_SUCCESS = "GET_POOLS_SUCESS";
+export const GET_POOLS_FAIL = "GET_POOLS_FAIL";

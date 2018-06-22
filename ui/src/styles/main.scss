@@ -1,0 +1,68 @@
+@import './colors.scss';
+@import './fonts.scss';
+
+/* General styles */
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Myriad;
+  background: $backgroundColor;
+  font-weight: 400;
+  font-size: 1rem;
+}
+
+p {
+  font-size: 1rem;
+}
+
+.page__title {
+  text-align: center;
+  padding: 1.8rem 0;
+  color: $darkTextColor;
+  word-wrap: break-word;
+}
+
+.pt-table-container {
+  outline: none;
+}
+
+.pt-table-cell {
+  display: flex;
+  align-items: center;
+  font-size: .9rem;
+}
+
+.spinnerWrapper {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.pt-table-column-name {
+  font-weight: 600;
+}
+
+h1, h2, h3 {
+  color: $darkTextColor;
+}
+
+h1 {
+  font-size: $h1;
+}
+
+h2 {
+  font-size: $h2;
+  font-family: MyriadSemiBold;
+}
+
+h3 {
+  font-size: $h3;
+}
+
+.chartLabel {
+  font-size: $h2;
+  font-weight: 600;
+  font-family: MyriadSemiBold;  
+}
+

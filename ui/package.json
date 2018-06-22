@@ -1,0 +1,53 @@
+{
+  "name": "aion-pool",
+  "license": "MIT",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "husky": "^0.14.3",
+    "lint-staged": "^7.0.5",
+    "prettier": "^1.12.1",
+    "react-scripts": "^1.1.4"
+  },
+  "dependencies": {
+    "@blueprintjs/core": "^2.3.1",
+    "@blueprintjs/docs-theme": "^2.1.2",
+    "@blueprintjs/table": "^2.1.1",
+    "blueprint-css": "^3.0.0-beta.0",
+    "cross-fetch": "^2.2.0",
+    "lodash.get": "^4.4.2",
+    "node-sass-chokidar": "^1.2.2",
+    "npm-run-all": "^4.1.2",
+    "react": "^16.3.2",
+    "react-dom": "^16.3.2",
+    "react-nvd3": "^0.5.7",
+    "react-redux": "^5.0.6",
+    "react-router": "^4.2.0",
+    "react-router-dom": "^4.2.2",
+    "react-router-redux": "^5.0.0-alpha.9",
+    "react-transition-group": "^2.3.1",
+    "redux": "^3.7.2",
+    "redux-actions": "^2.4.0",
+    "redux-devtools-extension": "^2.13.2",
+    "redux-thunk": "^2.2.0",
+    "s": "^0.1.1",
+    "sanitize.css": "^5.0.0"
+  },
+  "scripts": {
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject",
+    "precommit": "lint-staged",
+    "build-css":
+      "node-sass-chokidar --include-path ./src --include-path node_modules src/ -o src/",
+    "watch-css":
+      "npm run build-css && node-sass-chokidar --include-path ./src --include-path node_modules src/ -o src/ --watch --recursive",
+    "start-js": "react-scripts start",
+    "start": "npm-run-all -p watch-css start-js",
+    "build-js": "react-scripts build",
+    "build": "npm-run-all build-css build-js"
+  },
+  "homepage": "",
+  "lint-staged": {
+    "*.{js,json,css,md}": ["prettier --write", "git add"]
+  }
+}

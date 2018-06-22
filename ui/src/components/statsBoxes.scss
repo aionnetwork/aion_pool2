@@ -1,0 +1,54 @@
+@import 'styles/colors.scss';
+@import 'styles/fonts.scss';
+
+.statsBoxes {
+  padding: 0;
+  list-style-type: none;
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: -1.5rem;
+  margin-bottom: 2.5rem;
+
+  li {
+    margin-top: 3rem;
+    margin-right: 3rem;
+    text-align: center;
+    min-width: 10rem;
+    color: $boxTextColor;
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    .box__icon {
+        text-align: center;
+        padding: 0.7rem 0;
+        span {
+            font-size: 1.3rem;
+        }
+    }
+
+    .box__title {
+        font-size: $boxTitle;
+        margin: 1.2rem 0;
+    }
+
+    .box__description {
+        font-size: 0.7rem;
+    }
+  }
+
+  @media only screen and (max-width: 650px) {
+    display: block;
+    li {
+        width: 100%;
+        margin-right: 0;
+        margin-top: 0.5rem;
+        &:first-child {
+            margin-left: 0;
+        }
+    }
+  }
+}

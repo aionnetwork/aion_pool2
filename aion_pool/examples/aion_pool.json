@@ -1,0 +1,121 @@
+{
+    "logging": {
+      "level": "info",
+      "enableConsoleLog": true,
+      "enableConsoleColors": true,
+      "logFile": "aion-1.log",
+      "logBaseDirectory": "",
+      "perPoolLogFile": false
+    },
+  
+    "banning": {
+      "manager": "integrated",
+      "banOnJunkReceive": true,
+      "banOnInvalidShares": false
+    },
+  
+    "notifications": {
+      "enabled": true,
+      "email": {
+        "host": "smtp.example.com",
+        "port": 587,
+        "user": "user",
+        "password": "password",
+        "fromAddress": "info@yourpool.org",
+        "fromName": "pool support"
+      },
+  
+      "admin": {
+        "enabled": false,
+        "emailAddress": "user@example.com",
+        "notifyBlockFound": true
+      }
+    },
+    "persistence": {
+      "postgres": {
+        "host": "127.0.0.1",
+        "port": 5432,
+        "user": "miningcore",
+        "password": "password", 
+        "database": "miningcore"
+      }
+    },
+  
+    "paymentProcessing": {
+      "enabled": true,
+      "interval": 10,
+      "shareRecoveryFile": "recovered-shares.txt"
+    },
+  
+    "api": {
+      "enabled": true,
+      "listenAddress": "127.0.0.1",
+      "port": 4000
+    },
+  
+    "pools": [{
+    "id": "aion-1",
+       "enabled": true,
+       "coin": {
+         "type": "AION"
+       },
+      "address": "0xa0...",
+      "rewardRecipients": [
+        {
+          "address": "0xa0...",
+          "percentage": 1
+        }
+      ],
+  
+      "blockRefreshInterval": 500,
+  
+      "jobRebroadcastTimeout": 10,
+  
+      "clientConnectionTimeout": 600,
+  
+      "banning": {
+        "enabled": true,
+        "time": 600,
+        "invalidPercent": 50,
+        "checkThreshold": 50
+      },
+  
+      "ports": {
+        "3333": {
+          "listenAddress": "0.0.0.0",
+          "difficulty": 512,
+          "varDiff": {
+            "minDiff": 128,
+            "maxDiff": 1000000000000000000000000,
+            "targetTime": 5,
+            "retargetTime": 45,
+            "variancePercent": 30,
+            "maxDelta": 500
+          }
+        }
+      },
+  
+      "daemons": [{
+          "host": "127.0.0.1",
+          "port": 8545,
+          "user": "",
+          "password": ""
+        }
+      ],
+  
+      "paymentProcessing": {
+        "enabled": true,
+        "minimumPayment": 0.1,
+        "payoutScheme": "PPLNS",
+        "payoutSchemeConfig": {
+          "factor": 2.0
+        },
+        "accountPassword": "asd",
+        "keepTransactionFees": false,
+        "minimumConfirmations": 30,
+        "nrgFee": 0.0001,
+        "minimumPeerCount": 1        
+      }
+    }]
+  }
+  
