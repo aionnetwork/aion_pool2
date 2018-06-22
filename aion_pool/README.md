@@ -193,7 +193,7 @@ Make the following edits to the config file (aion_pool.json):
      - Change the port and listening address as needed based on your server configuration
      - Adjust difficulty, minDiff, maxDiff, targetTime and retargetTime as needed.
    - ***paymentProcessing***
-     - ***address***: Change to contain the "password" which matches the miner account specified in the kernel configuration.
+     - ***accountPassword***: Change to contain the "password" which matches the miner account specified in the kernel configuration.
      - (Optional) Change ***minimumConfirmations*** to the number of blocks (depth in the chain) that must be established before rewards begin to be distributed.
      - (Optional) ***minimumPeerCount*** is the number of peers your kernel must be connected to minimum this number of peers in order to distribute rewards. This ensures rewards are not distributed should the aion kernel become disconnected from the rest of the network. 
 
