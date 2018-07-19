@@ -145,7 +145,20 @@ namespace MiningCore.Blockchain.Aion
 
             if (isLowDiffShare) 
             {
-                throw new StratumException(StratumError.LowDifficultyShare, $"low difficulty share ({shareDiff})");
+                // Check if matched a previous varDiff before retarget
+                if (context.VarDiff?.LastUpdate != null && context.PreviousDifficulty.HasValue)
+                {
+                    var prevSentTargetInt = new uint256(AionUtils.diffToTarget(context.PreviousDifficulty.Value).HexToByteArray().ReverseArray());
+                    var prevSentTargetBi = new BigInteger(prevSentTargetInt.ToBytes());
+                    if (prevSentTargetBi <= headerBigInt)
+                    {
+                        stratumDifficulty = context.PreviousDifficulty.Value;
+                    }
+                }
+                else
+                {
+                    throw new StratumException(StratumError.LowDifficultyShare, $"low difficulty share ({shareDiff})");   
+                }                
             }
 
             var result = new Share
