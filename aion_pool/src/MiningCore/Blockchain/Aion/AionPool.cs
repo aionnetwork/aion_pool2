@@ -204,8 +204,7 @@ namespace MiningCore.Blockchain.Aion
                 catch (MiningCore.Stratum.StratumException ex)
                 {
                     logger.Info(() => $"[{LogCat}] [{client.ConnectionId}] Exception occured: {ex.Message}");
-                    client.RespondError(ex.Code, ex.Message, request.Id, false);
-                    context.Stats.InvalidShares++;
+                    throw ex;
                 }
 
                 // update client stats
@@ -220,7 +219,19 @@ namespace MiningCore.Blockchain.Aion
                 logger.Debug(() => $"[{LogCat}] [{client.ConnectionId}] Share rejected: {ex.Code}");
 
                 // banning
-                ConsiderBan(client, context, poolConfig.Banning);
+                if(context.Stats.InvalidShares > ((poolConfig.Banning.CheckThreshold / 2) - 10) && 
+                    context.Stats.InvalidShares < ((poolConfig.Banning.CheckThreshold / 2) + 10)) {
+                    
+                    if(!context.IsInitialWorkSent && context.IsAuthorized) {
+                        EnsureInitialWorkSent(client);
+                    } else if(context.IsAuthorized) {
+                        OnNewJob(currentJobParams);
+                    } else {
+                        DisconnectClient(client);
+                    }
+                } else {
+                    ConsiderBan(client, context, poolConfig.Banning);
+                }
             }
         }
 
@@ -230,19 +241,15 @@ namespace MiningCore.Blockchain.Aion
 
             lock (context)
             {
-                if (context.IsAuthorized && context.IsAuthorized && !context.IsInitialWorkSent)
+                if (context.IsAuthorized && !context.IsInitialWorkSent)
                 {
                     context.IsInitialWorkSent = true;
                     string newTarget = AionUtils.diffToTarget(context.Difficulty);
                     ArrayList arrayTarget = new ArrayList();
                     arrayTarget.Add(newTarget);
-                    // arrayTarget.Add(context.Difficulty);
-                    // update the difficulty
-                    // (((object[])currentJobParams)[2]) = newTarget;
-
+                
                     // send intial update
                     client.Notify(AionStratumMethods.MiningNotify, currentJobParams);
-                    // client.Notify(AionStratumMethods.SetDifficulty, arrayTarget);
                     client.Notify(AionStratumMethods.SetTarget, arrayTarget);
                 }
             }
@@ -278,13 +285,9 @@ namespace MiningCore.Blockchain.Aion
                     string newTarget = AionUtils.diffToTarget(context.Difficulty);
                     ArrayList arrayTarget = new ArrayList();
                     arrayTarget.Add(newTarget);
-                    // arrayTarget.Add(context.Difficulty);
-                    // send job
-                    // (((object[])currentJobParams)[2]) = newTarget;
+
                     client.Notify(AionStratumMethods.MiningNotify, currentJobParams);
-                    // client.Notify(AionStratumMethods.SetDifficulty, arrayTarget);
-                    client.Notify(AionStratumMethods.SetTarget, arrayTarget);
-                    // logger.Info("Context difficulty: " + context.Difficulty);                    
+                    client.Notify(AionStratumMethods.SetTarget, arrayTarget);              
                 }
             });
         }
