@@ -26,5 +26,6 @@ namespace MiningCore.Blockchain.Aion
         /// Used to signal the miner to stop submitting shares under the new difficulty.
         /// </summary>
         public const string SetDifficulty = "mining.set_difficulty";
+        public const string SetTarget = "mining.set_target";
     }
 }
