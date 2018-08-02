@@ -205,6 +205,10 @@ namespace MiningCore.Payments.PaymentSchemes
                 for (var i = 0; !done && i < page.Length; i++)
                 {
                     var share = page[i];
+                    if (share.Difficulty == 0 || share.NetworkDifficulty == 0) {
+                        logger.Warn(() => $"Found share with 0 difficulty submited by miner {share.Miner} for block {share.BlockHeight}");
+                        continue;
+                    }
 
                     // build address
                     var address = share.Miner;
