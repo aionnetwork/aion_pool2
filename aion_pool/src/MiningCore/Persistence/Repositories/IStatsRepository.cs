@@ -41,5 +41,7 @@ namespace MiningCore.Persistence.Repositories
         PoolValueStat[] GetPoolConnectedMiners(IDbConnection con, string poolId, DateTime start, DateTime end, StatsGranularity granularity);
         PoolValueStat[] GetPoolHashrate(IDbConnection con, string poolId, DateTime start, DateTime end, StatsGranularity granularity);
         PoolValueStat[] GetPoolNetworkPercentage(IDbConnection con, string poolId, DateTime start, DateTime end, StatsGranularity granularity);
+        
+        //----------- BEGIN POOL HASHRATE CONFIGURATION  ------------------//
     }
 }

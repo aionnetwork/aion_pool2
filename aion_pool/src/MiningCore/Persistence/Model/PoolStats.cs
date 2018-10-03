@@ -49,4 +49,15 @@ namespace MiningCore.Persistence.Model
 
         public DateTime Created { get; set; }
     }
+    
+    //-------------- begin pool hashrate handler ----------------//
+    public class PoolHashrateStats
+    {
+        public long Id { get; set; }
+        public string PoolId { get; set; }
+        public double PoolHashrate { get; set; }
+        public double Networkhashrate { get; set; }
+        public DateTime Created { get; set; }
+    }
+    //----------------- END POOL HASHRATE HANDLER  ---------------//
 }

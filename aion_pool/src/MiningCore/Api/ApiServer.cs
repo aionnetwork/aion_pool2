@@ -669,6 +669,7 @@ namespace MiningCore.Api
             await SendJsonAsync(context, result);
         }
 
+
         private async Task HandleForceGcAsync(HttpContext context, Match m)
         {
             GC.Collect(2, GCCollectionMode.Forced);
@@ -742,6 +743,7 @@ namespace MiningCore.Api
                 Updated = DateTime.Now
             };
         }
+         
 
         #endregion // API
 

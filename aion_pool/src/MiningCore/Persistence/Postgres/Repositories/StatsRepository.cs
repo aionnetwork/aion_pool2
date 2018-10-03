@@ -76,6 +76,35 @@ namespace MiningCore.Persistence.Postgres.Repositories
 
             con.Execute(query, mapped, tx);
         }
+        
+        //-------------------- START POOL HASHRATE PERCENTAGE HANDLING --------------------------//
+        public void InsertPoolHashrateStats(IDbConnection con, IDbTransaction tx, PoolHashrateStats stats)
+        {
+            logger.LogInvoke();
+            
+            var mapped = mapper.Map<Entities.PoolHashrateStats>(stats);
+
+            var query = "INSERT INTO poolhashrate_stats(poolid, hashrate, created)" +
+                "VALUES(@poolid,@hashrate,@created)";
+
+            con.Execute(query, mapped, tx);
+
+        }
+
+        public PoolHashrateStats GetPoolHashrateStats(IDbConnection con, DateTime start, DateTime end, string poolId)
+        {
+            logger.LogInvoke();
+
+            var query = "SELECT avg(poolhashrate)/avg(networkhasrate) FROM poolhashrate_stats WHERE poolid = @poolId " +
+                        "and created >= start and created <=end";
+            var entity = con.QuerySingleOrDefault<Entities.PoolStats>(query, new { poolId });
+            if (entity == null)
+                return null;
+
+            return mapper.Map<PoolHashrateStats>(entity);
+        }
+        
+        //------------------------ END POOL HASHRATE PERCENTAGE HANDLING -------------------------//
 
         public PoolStats GetLastPoolStats(IDbConnection con, string poolId)
         {

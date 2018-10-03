@@ -22,7 +22,9 @@ using MiningCore.Util;
 using MiningCore.DaemonInterface;
 using NBitcoin;
 using NBitcoin.DataEncoders;
+using Newtonsoft.Json;
 using NLog;
+using static System.Convert;
 
 namespace MiningCore.Blockchain.Aion
 {
@@ -79,15 +81,17 @@ namespace MiningCore.Blockchain.Aion
             StratumClient worker, string extraNonce2, string nTime, string solution)
         {
             Contract.RequiresNonNull(worker, nameof(worker));
-            Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(extraNonce2), $"{nameof(extraNonce2)} must not be empty");
+            Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(extraNonce2),
+                $"{nameof(extraNonce2)} must not be empty");
             Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(nTime), $"{nameof(nTime)} must not be empty");
-            Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(solution), $"{nameof(solution)} must not be empty");
+            Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(solution),
+                $"{nameof(solution)} must not be empty");
 
             var context = worker.GetContextAs<AionWorkerContext>();
-
+        
             // validate nTime
             if (nTime.Length != 16)
-                throw new StratumException(StratumError.Other, "incorrect size of ntime");             
+                throw new StratumException(StratumError.Other, "incorrect size of ntime");
 
             // var nTimeInt = decimal.Parse(nTime.HexToByteArray().ReverseArray().ToHexString(), NumberStyles.HexNumber);
 
@@ -100,10 +104,10 @@ namespace MiningCore.Blockchain.Aion
             // validate solution (2822 solution length (1408 * 2 for hex) + 3 byte buffer) OR (2816 without buffer)
             //if (solution.Length != 2816 || solution.Length != 2822)
             //    throw new StratumException(StratumError.Other, "incorrect size of solution, length: " + solution.Length);
-            
-            if (solution.Length == 2822) 
+
+            if (solution.Length == 2822)
                 solution = solution.Substring(6); // Remove 3 byte buffer
-            else if(solution.Length != 2816)
+            else if (solution.Length != 2816)
                 throw new StratumException(StratumError.Other, "incorrect size of solution");
 
             // duplicate check
@@ -112,12 +116,13 @@ namespace MiningCore.Blockchain.Aion
             return await ProcessShareInternal(worker, nonce, nTime, solution);
         }
 
-         private async Task<(Share Share, string nonce, string solution, string headerHash, string nTime)> ProcessShareInternal(
-             StratumClient worker, string nonce, string nTime, string solution)
+        private async Task<(Share Share, string nonce, string solution, string headerHash, string nTime)>
+            ProcessShareInternal(
+                StratumClient worker, string nonce, string nTime, string solution)
         {
             var context = worker.GetContextAs<AionWorkerContext>();
             var solutionBytes = solution.HexToByteArray();
-            
+
             // serialize block-header
             var headerBytes = SerializeHeader(nonce);
 
@@ -131,24 +136,25 @@ namespace MiningCore.Blockchain.Aion
             var headerHashReversed = headerHash.ToReverseArray();
             var headerBigInt = headerHashReversed.ToBigInteger();
             var target = new BigInteger(blockTarget.ToBytes());
-            
+
             var isBlockCandidate = target > headerBigInt;
 
             // calc share-diff
-            var stratumDifficulty = context.Difficulty > Difficulty ? Difficulty : context.Difficulty; 
-            var shareDiff = stratumDifficulty;           
+            var stratumDifficulty = context.Difficulty > Difficulty ? Difficulty : context.Difficulty;
+            var shareDiff = stratumDifficulty;
             var ratio = shareDiff / stratumDifficulty;
 
             var sentTargetInt = new uint256(AionUtils.diffToTarget(context.Difficulty).HexToByteArray().ReverseArray());
             var sentTarget = new BigInteger(sentTargetInt.ToBytes());
             var isLowDiffShare = sentTarget <= headerBigInt;
 
-            if (isLowDiffShare) 
+            if (isLowDiffShare)
             {
                 // Check if matched a previous varDiff before retarget
                 if (context.VarDiff?.LastUpdate != null && context.PreviousDifficulty.HasValue)
                 {
-                    var prevSentTargetInt = new uint256(AionUtils.diffToTarget(context.PreviousDifficulty.Value).HexToByteArray().ReverseArray());
+                    var prevSentTargetInt = new uint256(AionUtils.diffToTarget(context.PreviousDifficulty.Value)
+                        .HexToByteArray().ReverseArray());
                     var prevSentTargetBi = new BigInteger(prevSentTargetInt.ToBytes());
                     if (prevSentTargetBi <= headerBigInt)
                     {
@@ -157,8 +163,8 @@ namespace MiningCore.Blockchain.Aion
                 }
                 else
                 {
-                    throw new StratumException(StratumError.LowDifficultyShare, $"low difficulty share ({shareDiff})");   
-                }                
+                    throw new StratumException(StratumError.LowDifficultyShare, $"low difficulty share ({shareDiff})");
+                }
             }
 
             var result = new Share
@@ -168,7 +174,7 @@ namespace MiningCore.Blockchain.Aion
                 Miner = context.MinerName,
                 Worker = context.WorkerName,
                 UserAgent = context.UserAgent,
-                NetworkDifficulty = Difficulty,
+                NetworkDifficulty = context.Difficulty,
                 Difficulty = stratumDifficulty,
                 IsBlockCandidate = isBlockCandidate,
                 TransactionConfirmationData = headerHash.ToHexString(),
@@ -190,9 +196,14 @@ namespace MiningCore.Blockchain.Aion
             return blockHeader.HexToByteArray();
         }
 
-        private double getNetworkDifficulty() {
-            var response = daemonClient.ExecuteCmdAnyAsync<string>(AionCommands.GetDifficulty).Result;
-            return (double) Convert.ToInt32(response.Response, 16);
+        public double getNetworkDifficulty()
+        {
+            
+            var response = daemonClient.ExecuteStringResponseCmdSingleAsync(AionCommands.GetDifficulty).Result;
+            double responseDouble = Convert.ToInt32(response, 16);
+            return responseDouble;
         }
-    }
+
+         
+}
 }

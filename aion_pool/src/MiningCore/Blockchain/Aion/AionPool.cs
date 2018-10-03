@@ -199,7 +199,10 @@ namespace MiningCore.Blockchain.Aion
                     // update pool stats
                     if (share.IsBlockCandidate)
                         poolStats.LastPoolBlockTime = clock.Now;
-                        
+                    // included by Andre-aion
+                    poolStats.NetworkDifficulty = context.Difficulty;
+
+
                 }
                 catch (MiningCore.Stratum.StratumException ex)
                 {

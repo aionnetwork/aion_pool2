@@ -37,4 +37,6 @@ namespace MiningCore.Blockchain
     {
         string Next();
     }
+    
+    
 }
