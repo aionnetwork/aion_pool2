@@ -1,6 +1,8 @@
 using System.Numerics;
 using System.Linq;
 using System;
+using MiningCore.DaemonInterface;
+using Newtonsoft.Json;
 
 namespace MiningCore.Blockchain.Aion
 {
@@ -62,6 +64,14 @@ namespace MiningCore.Blockchain.Aion
             }
 
             return new string(c);
+        }
+        
+        public static double getNetworkDifficulty()
+        {
+            JsonSerializerSettings serializerSettings = null;
+            DaemonClient daemonClient = new DaemonClient(serializerSettings);
+            var response = daemonClient.ExecuteStringResponseCmdSingleAsync(AionCommands.GetDifficulty).Result;
+            return Convert.ToInt32(response);
         }
         
     }

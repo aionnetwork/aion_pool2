@@ -33,6 +33,7 @@ namespace MiningCore.Blockchain.Aion
         public const string GetDifficulty = "getdifficulty";
         public const string GetMinerStats = "getMinerStats";
         public const string Ping = "ping";
+        
     }
 
 }

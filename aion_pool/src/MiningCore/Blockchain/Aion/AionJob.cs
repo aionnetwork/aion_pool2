@@ -52,7 +52,7 @@ namespace MiningCore.Blockchain.Aion
         private readonly ILogger logger;
         private EquihashSolver equihash = EquihashSolver.Instance.Value;
         private IHashAlgorithm headerHasher = new Blake2b();
-        public double Difficulty { get; protected set; }
+        public double Difficulty { get; set; }
         public DaemonClient daemonClient;
 
         private void RegisterNonce(StratumClient worker, string nonce)
@@ -191,8 +191,8 @@ namespace MiningCore.Blockchain.Aion
         }
 
         private double getNetworkDifficulty() {
-            var response = daemonClient.ExecuteCmdAnyAsync<string>(AionCommands.GetDifficulty).Result;
-            return (double) Convert.ToInt32(response.Response, 16);
+            var response = daemonClient.ExecuteStringResponseCmdSingleAsync(AionCommands.GetDifficulty).Result;
+            return Convert.ToInt32(response);
         }
     }
 }
