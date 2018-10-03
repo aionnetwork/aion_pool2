@@ -39,9 +39,11 @@ using FluentValidation;
 using Microsoft.Extensions.CommandLineUtils;
 using MiningCore.Api;
 using MiningCore.Api.Responses;
+using MiningCore.Blockchain.Aion;
 using MiningCore.Configuration;
 using MiningCore.Crypto.Hashing.Algorithms;
 using MiningCore.Crypto.Hashing.Equihash;
+using MiningCore.DaemonInterface;
 using MiningCore.Extensions;
 using MiningCore.Mining;
 using MiningCore.Native;
@@ -80,7 +82,7 @@ namespace MiningCore
 
         private static readonly Regex regexJsonTypeConversionError =
             new Regex("\"([^\"]+)\"[^\']+\'([^\']+)\'.+\\s(\\d+),.+\\s(\\d+)", RegexOptions.Compiled);
-
+        
         public static void Main(string[] args)
         {
             try
@@ -88,8 +90,10 @@ namespace MiningCore
                 AppDomain.CurrentDomain.UnhandledException += OnAppDomainUnhandledException;
                 AppDomain.CurrentDomain.ProcessExit += OnProcessExit;
                 Console.CancelKeyPress += OnCancelKeyPress;
+                
 #if DEBUG
                 PreloadNativeLibs();
+                               
 #endif
                 //TouchNativeLibs();
                 if (!HandleCommandLineOptions(args, out var configFile))
@@ -106,7 +110,8 @@ namespace MiningCore
                 ValidateConfig();
                 Bootstrap();
                 LogRuntimeInfo();
-
+                
+                
                 if (!shareRecoveryOption.HasValue())
                 {
                     if(!cts.IsCancellationRequested)
@@ -115,6 +120,8 @@ namespace MiningCore
 
                 else
                     RecoverShares(shareRecoveryOption.Value());
+               
+                
             }
 
             catch (PoolStartupAbortException ex)
@@ -154,11 +161,15 @@ namespace MiningCore
 
                 Console.WriteLine("Cluster cannot start. Good Bye!");
             }
+            
+          
+            
 
             Shutdown();
             Process.GetCurrentProcess().CloseMainWindow();
             Process.GetCurrentProcess().Close();
         }
+        
 
         private static void LogRuntimeInfo()
         {
@@ -700,5 +711,7 @@ namespace MiningCore
                     Console.WriteLine($"Unable to load {path}");
             }
         }
+        
+        
     }
 }

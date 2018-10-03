@@ -33,6 +33,12 @@ namespace MiningCore.Blockchain.Aion
         public const string GetDifficulty = "getdifficulty";
         public const string GetMinerStats = "getMinerStats";
         public const string Ping = "ping";
+        
+        //update 
+        public const string GetBLockNumber = "eth_blockNumber";
+        public const string GetPoolHashRate = "eth_hashrate";
+        
+
     }
 
 }

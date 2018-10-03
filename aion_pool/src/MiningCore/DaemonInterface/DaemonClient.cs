@@ -21,7 +21,9 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -31,6 +33,7 @@ using System.Net.WebSockets;
 using System.Reactive;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -48,6 +51,7 @@ using Newtonsoft.Json.Linq;
 using NLog;
 using Contract = MiningCore.Contracts.Contract;
 using System.Runtime.CompilerServices;
+using System.Xml.Schema;
 
 namespace MiningCore.DaemonInterface
 {
@@ -164,8 +168,7 @@ namespace MiningCore.DaemonInterface
         /// <typeparam name="TResponse"></typeparam>
         /// <returns></returns>
         public async Task<DaemonResponse<TResponse>> ExecuteCmdAnyAsync<TResponse>(string method, object payload = null,
-            JsonSerializerSettings payloadJsonSerializerSettings = null, bool throwOnError = false)
-            where TResponse : class
+            JsonSerializerSettings payloadJsonSerializerSettings = null, bool throwOnError = false) where TResponse : class
         {
             Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(method), $"{nameof(method)} must not be empty");
 
@@ -187,6 +190,29 @@ namespace MiningCore.DaemonInterface
         {
             return ExecuteCmdAnyAsync<JToken>(method);
         }
+        
+        /// <summary>
+        /// /Executes the request for only getDifficulty
+        /// </summary>
+        /// <param name="method"></param>
+        /// <param name="payload"></param>
+        /// <param name="payloadJsonSerializerSettings"></param>
+        /// <param name="throwOnError"></param>
+        /// <returns></returns>
+        public async Task<string> ExecuteStringResponseCmdSingleAsync(string method, object payload = null,
+            JsonSerializerSettings payloadJsonSerializerSettings = null, bool throwOnError = false)
+        {
+            Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(method), $"{nameof(method)} must not be empty");
+
+            logger.LogInvoke(new[] { method });
+
+            var tasks = endPoints.Select(endPoint => BuildRequestTask(endPoint, method, payload, payloadJsonSerializerSettings)).ToArray();
+
+            var taskFirstCompleted = await Task.WhenAny(tasks);
+            var result = MapDaemonResponse<string>(0, taskFirstCompleted, throwOnError).DifficultyResponse;
+            return result;
+        }
+        
 
         /// <summary>
         /// Executes the request against all configured demons and returns the first successful response
@@ -385,6 +411,8 @@ namespace MiningCore.DaemonInterface
             return rpcRequestId;
         }
 
+       
+
         private DaemonResponse<TResponse> MapDaemonResponse<TResponse>(int i, Task<JsonRpcResponse> x, bool throwOnError = false)
             where TResponse : class
         {
@@ -416,9 +444,13 @@ namespace MiningCore.DaemonInterface
             else
             {
                 Debug.Assert(x.IsCompletedSuccessfully);
-
+                
                 if (x.Result?.Result is JToken token)
                     resp.Response = token?.ToObject<TResponse>(serializer);
+                else if ((x.Result?.Result is string) && (!string.Equals(x.Result?.Result, "pong")))
+                {
+                    resp.DifficultyResponse = (string) x.Result?.Result;
+                }
                 else
                     resp.Response = (TResponse) x.Result?.Result;
 
@@ -529,6 +561,7 @@ namespace MiningCore.DaemonInterface
                 });
             }));
         }
+        
 
         private IObservable<PooledArraySegment<byte>[]> ZmqSubscribeEndpoint(DaemonEndpointConfig endPoint, string url, string topic, int numMsgSegments = 2)
         {

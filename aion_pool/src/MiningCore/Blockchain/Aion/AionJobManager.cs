@@ -248,7 +248,10 @@ namespace MiningCore.Blockchain.Aion
                     BlockchainStats.BlockHeight = (long) currentJob.BlockTemplate.Height;
                     var (networkHashrate, poolHashRate) = getNetworkAndMinerHashRate();
                     BlockchainStats.NetworkHashrate = networkHashrate;
+                    //////       ADDED LINE BELOW    
+                    BlockchainStats.NetworkDifficulty = job.Difficulty;
                     PoolHashRate = poolHashRate;
+
                 }  
 
                 return isNew;

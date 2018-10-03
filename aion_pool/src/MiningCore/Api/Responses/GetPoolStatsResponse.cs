@@ -19,6 +19,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 using System;
+using Dapper;
 
 namespace MiningCore.Api.Responses
 {
@@ -27,6 +28,10 @@ namespace MiningCore.Api.Responses
         public float PoolHashrate { get; set; }
         public int ConnectedMiners { get; set; }
         public double NetworkHashrate { get; set; }
+        /// <summary>
+        ///  change made 
+        /// </summary>
+        public double NetworkDifficulty { get; set; }
         public DateTime Created { get; set; }
     }
 

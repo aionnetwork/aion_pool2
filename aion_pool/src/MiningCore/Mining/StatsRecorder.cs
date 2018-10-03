@@ -7,13 +7,18 @@ using System.Net.Sockets;
 using System.Threading;
 using Autofac;
 using AutoMapper;
+using MailKit.Net.Imap;
+using MiningCore.Blockchain.Aion;
 using MiningCore.Configuration;
 using MiningCore.Contracts;
+using MiningCore.DaemonInterface;
 using MiningCore.Extensions;
 using MiningCore.Persistence;
 using MiningCore.Persistence.Model;
 using MiningCore.Persistence.Repositories;
 using MiningCore.Time;
+using NetMQ.Sockets;
+using Newtonsoft.Json;
 using NLog;
 using Polly;
 
@@ -121,7 +126,47 @@ namespace MiningCore.Mining
         }
 
         #endregion // API-Surface
-
+        
+        //------------  BEGIN POOL HASHRATE HANDLER -----------------//
+        
+        // get hashrate for a pool
+        private double updatePoolHashrate(int poolId)
+        {
+            logger.Info(() => $"Updating hashrate for pool {poolId}");
+            DaemonClient daemonClient = new DaemonClient(new JsonSerializerSettings());
+            var response = daemonClient.ExecuteStringResponseCmdSingleAsync(AionCommands.GetPoolHashRate).Result;
+            double responseDouble = Convert.ToInt32(response, 16);
+            return responseDouble;
+        }
+        
+        /*
+        // get hashrate for a pool
+        private double updateNetworkHashrate()
+        {
+            logger.Info(() => $"Updating network hashrate");
+            DaemonClient daemonClient = new DaemonClient(new JsonSerializerSettings());
+            var response = daemonClient.ExecuteStringResponseCmdSingleAsync(AionCommands.GetNetworkHashRate).Result;
+            double responseDouble = Convert.ToInt32(response, 16);
+            return responseDouble;
+        }
+        */
+        
+        // query the api on schedule - ever
+        
+        
+        /*
+        private void PoolHashRateScheduler(int poolId)
+        {
+            var start = clock.Now;
+            var target = start.AddSeconds(-HashrateCalculationWindow);
+            var poolIds = pools.Keys;
+            //fetch stats
+            var result = readFaultPolicy.Execute(() =>
+                cf.Run(con=>statsRepo.GetPoolHashrate())
+        }
+        */
+        
+        //-------------- END POOL HASHRATE HANDLER  -----------------//
         private void UpdatePoolHashrates()
         {
             var start = clock.Now;

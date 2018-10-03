@@ -1,4 +1,4 @@
-﻿set role miningcore;
+set role miningcore;
 
 CREATE TABLE shares
 (
@@ -117,6 +117,23 @@ CREATE TABLE IF NOT EXISTS coin_info
 	pricebtc DOUBLE PRECISION NOT NULL,
 	updated TIMESTAMP NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS poolhashrate_stats
+(
+  id BIGSERIAL NOT NULL PRIMARY KEY,
+  poolid TEXT NOT NULL,
+  poolhashrate DOUBLE PRECISION NOT NULL DEFAULT 0,
+  networkhashrate DOUBLE PRECISION NOT NULL DEFAULT 0,
+  created TIMESTAMP NOT NULL
+
+);
+
+CREATE INDEX IDX_HASHRATESTATS_POOL_CREATED on poolhashrate_stats(poolid, created);
+CREATE INDEX IDX_HASHRATESTATS_POOL on poolhashrate_stats(poolid);
+CREATE INDEX IDX_HASHRATESTATS_POOL_CREATED_HOUR on poolhashrate_stats(poolid, date_trunc('hour',created));
+CREATE INDEX IDX_HASHRATESTATS_POOL_CREATED_DAY on poolhashrate_stats(poolid, date_trunc('day',created));
+CREATE INDEX IDX_HASHRATESTATS_POOL_CREATED_MONTH on poolhashrate_stats(poolid, date_trunc('month',created));
+
 
 CREATE INDEX IDX_MINERSTATS_POOL_CREATED on minerstats(poolid, created);
 CREATE INDEX IDX_MINERSTATS_POOL_MINER_CREATED on minerstats(poolid, miner, created);
