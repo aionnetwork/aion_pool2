@@ -192,7 +192,18 @@ namespace MiningCore.Blockchain.Aion
 
         private double getNetworkDifficulty() {
             var response = daemonClient.ExecuteStringResponseCmdSingleAsync(AionCommands.GetDifficulty).Result;
-            return Convert.ToInt32(response);
+            try
+            {
+                double output = (double)Convert.ToInt32(response, 16);
+                return output;
+            }
+            catch
+            {
+                logger.Info(() => $"Error in casting getDifficulty response from string to int. Response: {response}");
+                logger.Error($"Network Difficulty Cast error: {response}");
+            }
+
+            return 0;
         }
     }
 }

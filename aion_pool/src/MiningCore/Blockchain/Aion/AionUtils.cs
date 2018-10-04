@@ -3,6 +3,7 @@ using System.Linq;
 using System;
 using MiningCore.DaemonInterface;
 using Newtonsoft.Json;
+using NLog;
 
 namespace MiningCore.Blockchain.Aion
 {
@@ -71,7 +72,17 @@ namespace MiningCore.Blockchain.Aion
             JsonSerializerSettings serializerSettings = null;
             DaemonClient daemonClient = new DaemonClient(serializerSettings);
             var response = daemonClient.ExecuteStringResponseCmdSingleAsync(AionCommands.GetDifficulty).Result;
-            return Convert.ToInt32(response);
+            try
+            {
+                double output = (double)Convert.ToInt32(response, 16);
+                return output;
+            }
+            catch
+            {
+                Console.WriteLine($"Network Difficulty Cast error: {response}");
+            }
+
+            return 0;
         }
         
     }
