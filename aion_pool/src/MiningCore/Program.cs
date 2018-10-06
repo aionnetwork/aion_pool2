@@ -75,6 +75,7 @@ namespace MiningCore
         private static StatsRecorder statsRecorder;
         private static ClusterConfig clusterConfig;
         private static ApiServer apiServer;
+        private static PoolHashratePercRecorder poolHashratePercRecorder;
 
         public static AdminGcStats gcStats = new AdminGcStats();
 
@@ -106,7 +107,13 @@ namespace MiningCore
                 ValidateConfig();
                 Bootstrap();
                 LogRuntimeInfo();
-
+                
+                /*
+                //--- RUN THE HASHRATEPERCENTAGE SCHEDULER  ----//
+                new PoolHashratePercRecorder(60);
+                //--- END THE HASHRATE PERCENTAGE SCHEDULAER ---//
+                */
+                
                 if (!shareRecoveryOption.HasValue())
                 {
                     if(!cts.IsCancellationRequested)
@@ -115,6 +122,8 @@ namespace MiningCore
 
                 else
                     RecoverShares(shareRecoveryOption.Value());
+                
+                
             }
 
             catch (PoolStartupAbortException ex)
@@ -543,6 +552,7 @@ namespace MiningCore
                 // start share receiver (for external shares)
                 shareReceiver = container.Resolve<ShareReceiver>();
                 shareReceiver.Start(clusterConfig);
+                
             }
 
             else
@@ -579,6 +589,11 @@ namespace MiningCore
                 statsRecorder.Configure(clusterConfig);
                 statsRecorder.Start();
             }
+            
+            // start poolHashRatePercemtageRecorder
+            poolHashratePercRecorder = container.Resolve<PoolHashratePercRecorder>();
+            poolHashratePercRecorder.Configure(clusterConfig);
+            poolHashratePercRecorder.Start();
 
             // start pools
             await Task.WhenAll(clusterConfig.Pools.Where(x => x.Enabled).Select(async poolConfig =>
@@ -594,6 +609,8 @@ namespace MiningCore
                 // pre-start attachments
                 shareReceiver?.AttachPool(pool);
                 statsRecorder?.AttachPool(pool);
+                poolHashratePercRecorder?.AttachPool(pool);
+                
 
                 await pool.StartAsync(cts.Token);
             }));
@@ -658,6 +675,8 @@ namespace MiningCore
             statsRecorder?.Stop();
             payoutManager?.Stop();
             shareReceiver?.Stop();
+            poolHashratePercRecorder?.Stop();
+
         }
 
         private static void TouchNativeLibs()

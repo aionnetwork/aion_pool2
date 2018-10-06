@@ -208,7 +208,8 @@ namespace MiningCore.DaemonInterface
             var taskFirstCompleted = await Task.WhenAny(tasks);
             return MapDaemonResponse<string>(0, taskFirstCompleted).Response;
         }
-
+        
+       
         /// <summary>
         /// Executes the request against all configured demons and returns the first successful response
         /// </summary>
@@ -221,7 +222,6 @@ namespace MiningCore.DaemonInterface
             where TResponse : class
         {
             Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(method), $"{nameof(method)} must not be empty");
-
             logger.LogInvoke(new[] { method });
 
             var task = BuildRequestTask(endPoints.First(), method, payload, payloadJsonSerializerSettings);

@@ -49,4 +49,5 @@ namespace MiningCore.Persistence.Model
 
         public DateTime Created { get; set; }
     }
+   
 }

@@ -42,4 +42,16 @@ namespace MiningCore.Persistence.Postgres.Entities
 
         public DateTime Created { get; set; }
     }
+    
+    public class PoolHashratePercentageStats
+    {
+      
+        //public long Id { get; set; }
+        public string PoolId { get; set; }
+        public double PoolHashrate { get; set; }
+        public double NetworkHashrate { get; set; }
+        //public DateTime Created { get; set; }
+    
+    }
+    
 }

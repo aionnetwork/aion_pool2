@@ -27,11 +27,16 @@ using Dapper;
 using MiningCore.Extensions;
 using MiningCore.Persistence.Model;
 using MiningCore.Persistence.Model.Projections;
+using MiningCore.Persistence.Postgres.Entities;
 using MiningCore.Persistence.Repositories;
 using MiningCore.Time;
 using NBitcoin;
 using NLog;
 using MinerStats = MiningCore.Persistence.Model.Projections.MinerStats;
+using MinerWorkerPerformanceStats = MiningCore.Persistence.Model.MinerWorkerPerformanceStats;
+using Payment = MiningCore.Persistence.Model.Payment;
+using PoolStats = MiningCore.Persistence.Model.PoolStats;
+using PoolValueStat = MiningCore.Persistence.Model.PoolValueStat;
 
 namespace MiningCore.Persistence.Postgres.Repositories
 {
@@ -75,6 +80,31 @@ namespace MiningCore.Persistence.Postgres.Repositories
                 "VALUES(@poolid, @miner, @worker, @hashrate, @sharespersecond, @created)";
 
             con.Execute(query, mapped, tx);
+        }
+
+        public void InsertPoolHashratePercentageStats(IDbConnection con, IDbTransaction tx,
+            PoolHashratePercentageStats stats)
+        {
+            logger.LogInvoke();
+            var mapped = mapper.Map<Entities.PoolHashratePercentageStats>(stats);
+
+            var query = "INSERT INTO poolhashratepercentagestats(poolid, poolhashrate, networkhashrate) " +
+                        "VALUES(@poolid, @poolhashrate, @networkhashrate)";
+
+            con.Execute(query, mapped, tx);
+        }
+
+        public PoolHashratePercentageStats GetLastPoolHashratePercentageStats(IDbConnection con, string poolId)
+        {
+            logger.LogInvoke();
+            var query = "SELECT poolhashrate/networkhashrate as poolhashrate FROM poolhashratepercentagestats" + 
+                        " WHERE poolid = @poolId ORDER BY created DESC FETCH NEXT 1 ROWS ONLY";
+
+            var entity = con.QuerySingleOrDefault<Entities.PoolHashratePercentageStats>(query, new {poolId});
+            if (entity == null)
+                return null;
+
+            return mapper.Map<PoolHashratePercentageStats>(entity);
         }
 
         public PoolStats GetLastPoolStats(IDbConnection con, string poolId)
