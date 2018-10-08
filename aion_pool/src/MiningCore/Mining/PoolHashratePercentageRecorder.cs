@@ -152,8 +152,7 @@ namespace MiningCore.Mining
 
             var poolIds = pools.Keys;
             var start = clock.Now;
-            var stats = new PoolHashratePercentageStats
-            {};
+            var stats = new PoolHashratePercentageStats{};
 
             foreach (var poolId in poolIds)
             {
@@ -173,6 +172,9 @@ namespace MiningCore.Mining
                 }
                 catch(Exception e)
                 {
+                    Console.WriteLine($"PLEASE ENSURE (IN YOUR 'aion-pool.config') THAT " +
+                                      $"YOUR POOL ADDRESS IS CORRECT. YOUR MINER ADDRESS MAY " +
+                                      $"NOT BE ON THE NETWORK");
                     Console.WriteLine($"Error calculating Pool({poolId}) Hashrate network percentage %");
                     Console.WriteLine($"Pool({poolId}) hashrate: {pools[poolId].PoolStats.PoolHashrate}");
                     Console.WriteLine($"Network hashrate: {pools[poolId].NetworkStats.NetworkHashrate}");
