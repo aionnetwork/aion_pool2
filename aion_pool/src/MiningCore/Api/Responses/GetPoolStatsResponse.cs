@@ -28,6 +28,7 @@ namespace MiningCore.Api.Responses
         public int ConnectedMiners { get; set; }
         public double NetworkHashrate { get; set; }
         public DateTime Created { get; set; }
+        public double PoolHashratePercentage {get; set;}
     }
 
     public class GetPoolStatsResponse

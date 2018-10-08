@@ -94,24 +94,21 @@ namespace MiningCore.Persistence.Postgres.Repositories
             con.Execute(query, mapped, tx);
         }
 
-        public PoolHashratePercentageStats GetLastPoolHashratePercentageStats(IDbConnection con, string poolId)
-        {
-            logger.LogInvoke();
-            var query = "SELECT poolhashrate/networkhashrate as poolhashrate FROM poolhashratepercentagestats" + 
-                        " WHERE poolid = @poolId ORDER BY created DESC FETCH NEXT 1 ROWS ONLY";
-
-            var entity = con.QuerySingleOrDefault<Entities.PoolHashratePercentageStats>(query, new {poolId});
-            if (entity == null)
-                return null;
-
-            return mapper.Map<PoolHashratePercentageStats>(entity);
-        }
-
+        
         public PoolStats GetLastPoolStats(IDbConnection con, string poolId)
         {
             logger.LogInvoke();
 
-            var query = "SELECT * FROM poolstats WHERE poolid = @poolId ORDER BY created DESC FETCH NEXT 1 ROWS ONLY";
+            var query = "SELECT ps.*," +
+                        "phps.poolhashrate/phps.networkhashrate as poolhashratepercentage " +
+                        "FROM poolstats ps " +
+                        "INNER JOIN poolhashratepercentagestats phps " +
+                        "ON phps.poolid = ps.poolid " +      
+                        "WHERE phps.poolid = @poolId " +
+                        "AND phps.created = " +
+                            "( SELECT MAX(created) FROM poolhashratepercentagestats " +
+                            "WHERE phps.poolid = @poolId )" +
+                        "ORDER BY created DESC FETCH NEXT 1 ROWS ONLY";
 
             var entity = con.QuerySingleOrDefault<Entities.PoolStats>(query, new { poolId });
             if (entity == null)
@@ -119,6 +116,7 @@ namespace MiningCore.Persistence.Postgres.Repositories
 
             return mapper.Map<PoolStats>(entity);
         }
+        
 
         public decimal GetTotalPoolPayments(IDbConnection con, string poolId)
         {

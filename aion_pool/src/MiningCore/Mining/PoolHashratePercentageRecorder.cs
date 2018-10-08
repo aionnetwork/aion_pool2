@@ -164,6 +164,7 @@ namespace MiningCore.Mining
                 double poolHashratePercentage = 0;
                 try
                 {
+                    
                     double numer = pools[poolId].PoolStats.PoolHashrate;
                     double denom = pools[poolId].NetworkStats.NetworkHashrate;
                     poolHashratePercentage = 100 * numer / denom;
@@ -172,7 +173,7 @@ namespace MiningCore.Mining
                 }
                 catch(Exception e)
                 {
-                    Console.WriteLine($"Error calculating Pool({poolId}) Hashrate Difficulty %");
+                    Console.WriteLine($"Error calculating Pool({poolId}) Hashrate network percentage %");
                     Console.WriteLine($"Pool({poolId}) hashrate: {pools[poolId].PoolStats.PoolHashrate}");
                     Console.WriteLine($"Network hashrate: {pools[poolId].NetworkStats.NetworkHashrate}");
                     Console.WriteLine($"Exception: {e}");
@@ -180,6 +181,7 @@ namespace MiningCore.Mining
                 
             }
         }
+        
         
         // Write to database
         private void Persist(string poolId, double poolhashrate, double networkhashrate, PoolHashratePercentageStats stats)
@@ -192,15 +194,6 @@ namespace MiningCore.Mining
                 stats.NetworkHashrate = networkhashrate;
                 statsRepo.InsertPoolHashratePercentageStats(con, tx, stats);
             });
-
-        }
-        
-        // Read from database
-        private void GetLastPoolHashrateStats(string poolId)
-        {
-            // fetch stats
-            var result = readFaultPolicy.Execute(() =>
-                cf.Run(con => statsRepo.GetLastPoolHashratePercentageStats(con, poolId)));
 
         }
         

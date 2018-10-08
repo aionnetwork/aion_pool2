@@ -46,10 +46,7 @@ namespace MiningCore.Persistence.Repositories
         WorkerPerformanceStatsContainer[] GetMinerPerformanceBetweenDaily(IDbConnection con, string poolId, string miner, DateTime start, DateTime end);
         PoolValueStat[] GetPoolConnectedMiners(IDbConnection con, string poolId, DateTime start, DateTime end, StatsGranularity granularity);
         PoolValueStat[] GetPoolHashrate(IDbConnection con, string poolId, DateTime start, DateTime end, StatsGranularity granularity);
-        PoolValueStat[] GetPoolNetworkPercentage(IDbConnection con, string poolId, DateTime start, DateTime end, StatsGranularity granularity);
-
-        PoolHashratePercentageStats GetLastPoolHashratePercentageStats(IDbConnection con, string poolId);
-       
+        PoolValueStat[] GetPoolNetworkPercentage(IDbConnection con, string poolId, DateTime start, DateTime end, StatsGranularity granularity);       
 
     }
 }
