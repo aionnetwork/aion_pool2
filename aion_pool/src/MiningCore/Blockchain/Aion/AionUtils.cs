@@ -2,7 +2,9 @@ using System.Numerics;
 using System.Linq;
 using System;
 using MiningCore.DaemonInterface;
+using MiningCore.Persistence.Postgres.Entities;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using NLog;
 
 namespace MiningCore.Blockchain.Aion
@@ -84,6 +86,9 @@ namespace MiningCore.Blockchain.Aion
 
             return 0;
         }
+       
         
     }
+    
+    
 }

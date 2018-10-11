@@ -122,8 +122,7 @@ namespace MiningCore
 
                 else
                     RecoverShares(shareRecoveryOption.Value());
-                
-                
+                                
             }
 
             catch (PoolStartupAbortException ex)

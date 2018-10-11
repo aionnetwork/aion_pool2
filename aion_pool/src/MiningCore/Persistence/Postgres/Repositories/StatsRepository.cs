@@ -100,7 +100,8 @@ namespace MiningCore.Persistence.Postgres.Repositories
             logger.LogInvoke();
 
             var query = "SELECT ps.*," +
-                        "phps.poolhashrate/phps.networkhashrate as poolhashratepercentage " +
+                        "CASE WHEN phps.networkhashrate = 0 THEN 0 ELSE " +
+                        "100 * phps.poolhashrate/phps.networkhashrate END as poolhashratepercentage " +
                         "FROM poolstats ps " +
                         "INNER JOIN poolhashratepercentagestats phps " +
                         "ON phps.poolid = ps.poolid " +      

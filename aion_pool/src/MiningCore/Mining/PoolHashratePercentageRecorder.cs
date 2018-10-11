@@ -154,11 +154,12 @@ namespace MiningCore.Mining
             var start = clock.Now;
             var stats = new PoolHashratePercentageStats{};
 
+           
             foreach (var poolId in poolIds)
             {
                 logger.Info(() => $"Updating hashrates for pool {poolId}");
                 
-                
+                      
                 //calculate difficulty percentage
                 double poolHashratePercentage = 0;
                 try
