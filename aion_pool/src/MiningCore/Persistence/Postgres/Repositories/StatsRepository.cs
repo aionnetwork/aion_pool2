@@ -82,14 +82,14 @@ namespace MiningCore.Persistence.Postgres.Repositories
             con.Execute(query, mapped, tx);
         }
 
-        public void InsertPoolHashratePercentageStats(IDbConnection con, IDbTransaction tx,
-            PoolHashratePercentageStats stats)
+        public void InsertPoolNetworkPercentageStats(IDbConnection con, IDbTransaction tx,
+            PoolNetworkPercentageStats stats)
         {
             logger.LogInvoke();
-            var mapped = mapper.Map<Entities.PoolHashratePercentageStats>(stats);
+            var mapped = mapper.Map<Entities.PoolNetworkPercentageStats>(stats);
 
-            var query = "INSERT INTO poolhashratepercentagestats(poolid, poolhashrate, networkhashrate) " +
-                        "VALUES(@poolid, @poolhashrate, @networkhashrate)";
+            var query = "INSERT INTO poolnetworkpercentagestats(poolid, networkpercentage) " +
+                        "VALUES(@poolid, @networkpercentage)";
 
             con.Execute(query, mapped, tx);
         }
@@ -98,17 +98,15 @@ namespace MiningCore.Persistence.Postgres.Repositories
         public PoolStats GetLastPoolStats(IDbConnection con, string poolId)
         {
             logger.LogInvoke();
-
             var query = "SELECT ps.*," +
-                        "CASE WHEN phps.networkhashrate = 0 THEN 0 ELSE " +
-                        "100 * phps.poolhashrate/phps.networkhashrate END as poolhashratepercentage " +
+                        "pnps.networkpercentage as poolnetworkpercentage " +
                         "FROM poolstats ps " +
-                        "INNER JOIN poolhashratepercentagestats phps " +
-                        "ON phps.poolid = ps.poolid " +      
-                        "WHERE phps.poolid = @poolId " +
-                        "AND phps.created = " +
-                            "( SELECT MAX(created) FROM poolhashratepercentagestats " +
-                            "WHERE phps.poolid = @poolId )" +
+                        "INNER JOIN poolnetworkpercentagestats pnps " +
+                        "ON pnps.poolid = ps.poolid " +      
+                        "WHERE pnps.poolid = @poolId " +
+                        "AND pnps.created = " +
+                            "(SELECT MAX(created) FROM poolnetworkpercentagestats " +
+                            "WHERE pnps.poolid = @poolId )" +
                         "ORDER BY created DESC FETCH NEXT 1 ROWS ONLY";
 
             var entity = con.QuerySingleOrDefault<Entities.PoolStats>(query, new { poolId });

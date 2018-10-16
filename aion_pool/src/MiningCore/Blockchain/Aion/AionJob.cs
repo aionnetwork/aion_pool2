@@ -23,6 +23,8 @@ using MiningCore.DaemonInterface;
 using NBitcoin;
 using NBitcoin.DataEncoders;
 using NLog;
+using MiningCore.Blockchain.Aion.DaemonResponses;
+
 
 namespace MiningCore.Blockchain.Aion
 {
@@ -205,5 +207,13 @@ namespace MiningCore.Blockchain.Aion
 
             return 0;
         }
+        
+        private double GetPoolNetworkPercentage(string poolAddress)
+        {
+            var response = daemonClient.ExecuteCmdAnyAsync<GetMinerHashRateResponse>(AionCommands.GetMinerStats, new [] { poolAddress }).Result;
+            var networkPercentage = (double) Convert.ToDouble(response.Response.MinerHashrateShare);
+            return networkPercentage;
+        }
+
     }
 }

@@ -34,7 +34,7 @@ namespace MiningCore.Persistence.Repositories
     {
         void InsertPoolStats(IDbConnection con, IDbTransaction tx, PoolStats stats);
         void InsertMinerWorkerPerformanceStats(IDbConnection con, IDbTransaction tx, MinerWorkerPerformanceStats stats);
-        void InsertPoolHashratePercentageStats(IDbConnection con, IDbTransaction tx, PoolHashratePercentageStats stats); 
+        void InsertPoolNetworkPercentageStats(IDbConnection con, IDbTransaction tx, PoolNetworkPercentageStats stats); 
             
         PoolStats GetLastPoolStats(IDbConnection con, string poolId);
         decimal GetTotalPoolPayments(IDbConnection con, string poolId);

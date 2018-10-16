@@ -26,6 +26,9 @@ using MiningCore.Persistence.Postgres.Entities;
 using Newtonsoft.Json.Bson;
 using Newtonsoft.Json.Linq;
 using Polly;
+using MiningCore.Blockchain.Aion.DaemonResponses;
+using MiningCore.Configuration;
+
 
 namespace MiningCore.Mining
 {
@@ -152,24 +155,19 @@ namespace MiningCore.Mining
 
             var poolIds = pools.Keys;
             var start = clock.Now;
-            var stats = new PoolHashratePercentageStats{};
+            var stats = new PoolNetworkPercentageStats{};
 
            
             foreach (var poolId in poolIds)
             {
                 logger.Info(() => $"Updating hashrates for pool {poolId}");
-                
-                      
-                //calculate difficulty percentage
-                double poolHashratePercentage = 0;
+                                   
+                double poolNetworkPercentage = 0;
                 try
                 {
-                    
-                    double numer = pools[poolId].PoolStats.PoolHashrate;
-                    double denom = pools[poolId].NetworkStats.NetworkHashrate;
-                    poolHashratePercentage = 100 * numer / denom;
-                    // make the call to write to the database
-                    Persist(poolId, numer, denom, stats);
+                    string poolAddress = pools[poolId].Config.Address;
+                    poolNetworkPercentage = 100*GetPoolNetworkPercentage(poolAddress, pools[poolId].Config);                    // make the call to write to the database
+                    Persist(poolId, poolNetworkPercentage, stats);
                 }
                 catch(Exception e)
                 {
@@ -177,8 +175,7 @@ namespace MiningCore.Mining
                                       $"YOUR POOL ADDRESS IS CORRECT. YOUR MINER ADDRESS MAY " +
                                       $"NOT BE ON THE NETWORK");
                     Console.WriteLine($"Error calculating Pool({poolId}) Hashrate network percentage %");
-                    Console.WriteLine($"Pool({poolId}) hashrate: {pools[poolId].PoolStats.PoolHashrate}");
-                    Console.WriteLine($"Network hashrate: {pools[poolId].NetworkStats.NetworkHashrate}");
+                    Console.WriteLine($"Pool({poolId}) network percentage: {poolNetworkPercentage}");
                     Console.WriteLine($"Exception: {e}");
                 }
                 
@@ -187,15 +184,14 @@ namespace MiningCore.Mining
         
         
         // Write to database
-        private void Persist(string poolId, double poolhashrate, double networkhashrate, PoolHashratePercentageStats stats)
+        private void Persist(string poolId, double networkhashrate, PoolNetworkPercentageStats stats)
         {
 
             cf.RunTx((con, tx) =>
             {
                 stats.PoolId = poolId;
-                stats.PoolHashrate = poolhashrate;
-                stats.NetworkHashrate = networkhashrate;
-                statsRepo.InsertPoolHashratePercentageStats(con, tx, stats);
+                stats.NetworkPercentage = networkhashrate;
+                statsRepo.InsertPoolNetworkPercentageStats(con, tx, stats);
             });
 
         }
@@ -217,5 +213,20 @@ namespace MiningCore.Mining
             logger.Warn(() => $"Retry {retry} due to {ex.Source}: {ex.GetType().Name} ({ex.Message})");
         }
 
+        private double GetPoolNetworkPercentage(string poolAddress, PoolConfig poolConfig)
+        {
+            JsonSerializerSettings jsonSerializerSettings = new JsonSerializerSettings();
+            DaemonClient daemon = new DaemonClient(jsonSerializerSettings);
+            var daemonEndpoints = poolConfig.Daemons
+                .Where(x => string.IsNullOrEmpty(x.Category))
+                .ToArray();            
+            daemon.Configure(daemonEndpoints);
+            var response = daemon.ExecuteCmdAnyAsync<GetMinerHashRateResponse>(AionCommands.GetMinerStats, new [] { poolAddress }).Result;
+            var networkPercentage = (double) Convert.ToDouble(response.Response.MinerHashrateShare);
+            return networkPercentage;
+        }
+
     }
+
+   
 }
