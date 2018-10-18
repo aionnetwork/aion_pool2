@@ -75,7 +75,7 @@ namespace MiningCore
         private static StatsRecorder statsRecorder;
         private static ClusterConfig clusterConfig;
         private static ApiServer apiServer;
-        private static PoolHashratePercRecorder poolHashratePercRecorder;
+        private static PoolNetworkPercRecorder poolNetworkPercRecorder;
 
         public static AdminGcStats gcStats = new AdminGcStats();
 
@@ -590,9 +590,9 @@ namespace MiningCore
             }
             
             // start poolHashRatePercemtageRecorder
-            poolHashratePercRecorder = container.Resolve<PoolHashratePercRecorder>();
-            poolHashratePercRecorder.Configure(clusterConfig);
-            poolHashratePercRecorder.Start();
+            poolNetworkPercRecorder = container.Resolve<PoolNetworkPercRecorder>();
+            poolNetworkPercRecorder.Configure(clusterConfig);
+            poolNetworkPercRecorder.Start();
 
             // start pools
             await Task.WhenAll(clusterConfig.Pools.Where(x => x.Enabled).Select(async poolConfig =>
@@ -608,7 +608,7 @@ namespace MiningCore
                 // pre-start attachments
                 shareReceiver?.AttachPool(pool);
                 statsRecorder?.AttachPool(pool);
-                poolHashratePercRecorder?.AttachPool(pool);
+                poolNetworkPercRecorder?.AttachPool(pool);
                 
 
                 await pool.StartAsync(cts.Token);
@@ -674,7 +674,7 @@ namespace MiningCore
             statsRecorder?.Stop();
             payoutManager?.Stop();
             shareReceiver?.Stop();
-            poolHashratePercRecorder?.Stop();
+            poolNetworkPercRecorder?.Stop();
 
         }
 

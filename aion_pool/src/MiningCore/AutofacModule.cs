@@ -98,7 +98,7 @@ namespace MiningCore
             builder.RegisterType<StatsRecorder>()
                 .AsSelf();
             
-            builder.RegisterType<PoolHashratePercRecorder>()
+            builder.RegisterType<PoolNetworkPercRecorder>()
                 .AsSelf();
 
             builder.RegisterType<NotificationService>()

@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using Autofac;
 using AutoMapper;
 using MailKit.Search;
+using MimeKit.Cryptography;
 using MiningCore.Blockchain.Aion;
 using MiningCore.DaemonInterface;
 using Newtonsoft.Json;
@@ -33,10 +34,9 @@ using MiningCore.Configuration;
 namespace MiningCore.Mining
 {
     
-    
-    public class PoolHashratePercRecorder
+    public class PoolNetworkPercRecorder
     {
-        public PoolHashratePercRecorder(IComponentContext ctx,
+        public PoolNetworkPercRecorder(IComponentContext ctx,
             IMasterClock clock,
             IConnectionFactory cf,
             IMapper mapper,
@@ -57,7 +57,12 @@ namespace MiningCore.Mining
 
             BuildFaultHandlingPolicy();
         }
-        
+
+        public PoolNetworkPercRecorder()
+        {
+            
+        }
+                  
         private readonly IMasterClock clock;
         private readonly IStatsRepository statsRepo;
         private readonly IConnectionFactory cf;
@@ -69,7 +74,9 @@ namespace MiningCore.Mining
         private Thread thread1;
         private const int RetryCount = 4;
         private Policy readFaultPolicy;
-        private long delayInSeconds = 30;
+        private long delayInSeconds = 40;
+
+        private static double PoolNetworkPercentage = 0;
 
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
         
@@ -84,7 +91,14 @@ namespace MiningCore.Mining
         {
             pools[pool.Config.Id] = pool;
         }
-
+        
+        // send to user interface
+        public double ToUIPoolNetworkPercentage()
+        {
+            return PoolNetworkPercentage;
+        }
+        
+        
         private void setDelayInSeconds()
         {
             try
@@ -94,7 +108,7 @@ namespace MiningCore.Mining
             catch (Exception e)
             {
                 delayInSeconds = 7200;
-                Console.WriteLine($"There is no pool '0'");
+                Console.WriteLine($"There is no HashratePercentage Calc Interval");
             }
         }
 
@@ -162,12 +176,13 @@ namespace MiningCore.Mining
             {
                 logger.Info(() => $"Updating hashrates for pool {poolId}");
                                    
-                double poolNetworkPercentage = 0;
+            
                 try
                 {
                     string poolAddress = pools[poolId].Config.Address;
-                    poolNetworkPercentage = 100*GetPoolNetworkPercentage(poolAddress, pools[poolId].Config);                    // make the call to write to the database
-                    Persist(poolId, poolNetworkPercentage, stats);
+                    PoolNetworkPercentage = 100*GetPoolNetworkPercentage(poolAddress, pools[poolId].Config);
+                    // make the call to write to the database
+                    Persist(poolId, PoolNetworkPercentage, stats);
                 }
                 catch(Exception e)
                 {
@@ -175,7 +190,7 @@ namespace MiningCore.Mining
                                       $"YOUR POOL ADDRESS IS CORRECT. YOUR MINER ADDRESS MAY " +
                                       $"NOT BE ON THE NETWORK");
                     Console.WriteLine($"Error calculating Pool({poolId}) Hashrate network percentage %");
-                    Console.WriteLine($"Pool({poolId}) network percentage: {poolNetworkPercentage}");
+                    Console.WriteLine($"Pool({poolId}) network percentage: {PoolNetworkPercentage}");
                     Console.WriteLine($"Exception: {e}");
                 }
                 
