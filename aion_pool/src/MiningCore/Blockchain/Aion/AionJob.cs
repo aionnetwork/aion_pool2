@@ -23,6 +23,8 @@ using MiningCore.DaemonInterface;
 using NBitcoin;
 using NBitcoin.DataEncoders;
 using NLog;
+using MiningCore.Blockchain.Aion.DaemonResponses;
+
 
 namespace MiningCore.Blockchain.Aion
 {
@@ -52,7 +54,7 @@ namespace MiningCore.Blockchain.Aion
         private readonly ILogger logger;
         private EquihashSolver equihash = EquihashSolver.Instance.Value;
         private IHashAlgorithm headerHasher = new Blake2b();
-        public double Difficulty { get; protected set; }
+        public double Difficulty { get; set; }
         public DaemonClient daemonClient;
 
         private void RegisterNonce(StratumClient worker, string nonce)
@@ -191,8 +193,27 @@ namespace MiningCore.Blockchain.Aion
         }
 
         private double getNetworkDifficulty() {
-            var response = daemonClient.ExecuteCmdAnyAsync<string>(AionCommands.GetDifficulty).Result;
-            return (double) Convert.ToInt32(response.Response, 16);
+            var response = daemonClient.ExecuteStringResponseCmdSingleAsync(AionCommands.GetDifficulty).Result;
+            try
+            {
+                double output = (double)Convert.ToInt32(response, 16);
+                return output;
+            }
+            catch
+            {
+                logger.Info(() => $"Error in casting getDifficulty response from string to int. Response: {response}");
+                logger.Error($"Network Difficulty Cast error: {response}");
+            }
+
+            return 0;
         }
+        
+        private double GetPoolNetworkPercentage(string poolAddress)
+        {
+            var response = daemonClient.ExecuteCmdAnyAsync<GetMinerHashRateResponse>(AionCommands.GetMinerStats, new [] { poolAddress }).Result;
+            var networkPercentage = (double) Convert.ToDouble(response.Response.MinerHashrateShare);
+            return networkPercentage;
+        }
+
     }
 }

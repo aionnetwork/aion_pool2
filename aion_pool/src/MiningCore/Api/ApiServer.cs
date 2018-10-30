@@ -351,7 +351,7 @@ namespace MiningCore.Api
             PoolValueStat[] stats = cf.Run(con => statsRepo.GetPoolHashrate(con, pool.Id, start, end, granularity));
             await SendJsonAsync(context, stats);
         }
-
+        
          private async Task GetMiningPoolStats(HttpContext context, Match m)
         {
             var pool = GetPool(context, m);

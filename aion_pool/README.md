@@ -196,6 +196,7 @@ Make the following edits to the config file (aion_pool.json):
      - ***accountPassword***: Change to contain the "password" which matches the miner account specified in the kernel configuration.
      - (Optional) Change ***minimumConfirmations*** to the number of blocks (depth in the chain) that must be established before rewards begin to be distributed.
      - (Optional) ***minimumPeerCount*** is the number of peers your kernel must be connected to minimum this number of peers in order to distribute rewards. This ensures rewards are not distributed should the aion kernel become disconnected from the rest of the network. 
+   - (Optional) ***hashratePercentageCalcInterval*** (seconds) is the interval at which your pool(s) will poll the kernal to get the network hashrate and pool hashrate. These are used to calculate the pool(s)' hashrate percentage of the total network hashrate.
 
 More information on the configuration file [here](https://github.com/coinfoundry/miningcore/wiki/Configuration).
 

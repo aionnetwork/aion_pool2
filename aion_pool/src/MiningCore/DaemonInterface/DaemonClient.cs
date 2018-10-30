@@ -187,7 +187,29 @@ namespace MiningCore.DaemonInterface
         {
             return ExecuteCmdAnyAsync<JToken>(method);
         }
+        
+        /// <summary>
+        /// /Executes the request for only getDifficulty
+        /// </summary>
+        /// <param name="method"></param>
+        /// <param name="payload"></param>
+        /// <param name="payloadJsonSerializerSettings"></param>
+        /// <param name="throwOnError"></param>
+        /// <returns></returns>
+        public async Task<string> ExecuteStringResponseCmdSingleAsync(string method, object payload = null,
+            JsonSerializerSettings payloadJsonSerializerSettings = null, bool throwOnError = false)
+        {
+            Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(method), $"{nameof(method)} must not be empty");
 
+            logger.LogInvoke(new[] { method });
+
+            var tasks = endPoints.Select(endPoint => BuildRequestTask(endPoint, method, payload, payloadJsonSerializerSettings)).ToArray();
+
+            var taskFirstCompleted = await Task.WhenAny(tasks);
+            return MapDaemonResponse<string>(0, taskFirstCompleted).Response;
+        }
+        
+       
         /// <summary>
         /// Executes the request against all configured demons and returns the first successful response
         /// </summary>
@@ -200,7 +222,6 @@ namespace MiningCore.DaemonInterface
             where TResponse : class
         {
             Contract.Requires<ArgumentException>(!string.IsNullOrEmpty(method), $"{nameof(method)} must not be empty");
-
             logger.LogInvoke(new[] { method });
 
             var task = BuildRequestTask(endPoints.First(), method, payload, payloadJsonSerializerSettings);

@@ -27,11 +27,18 @@ using Dapper;
 using MiningCore.Extensions;
 using MiningCore.Persistence.Model;
 using MiningCore.Persistence.Model.Projections;
+using MiningCore.Persistence.Postgres.Entities;
 using MiningCore.Persistence.Repositories;
 using MiningCore.Time;
 using NBitcoin;
 using NLog;
 using MinerStats = MiningCore.Persistence.Model.Projections.MinerStats;
+using MinerWorkerPerformanceStats = MiningCore.Persistence.Model.MinerWorkerPerformanceStats;
+using Payment = MiningCore.Persistence.Model.Payment;
+using PoolStats = MiningCore.Persistence.Model.PoolStats;
+using PoolValueStat = MiningCore.Persistence.Model.PoolValueStat;
+using MiningCore.Mining;
+
 
 namespace MiningCore.Persistence.Postgres.Repositories
 {
@@ -47,6 +54,7 @@ namespace MiningCore.Persistence.Postgres.Repositories
         private readonly IMasterClock clock;
         private static readonly ILogger logger = LogManager.GetCurrentClassLogger();
         private static readonly TimeSpan MinerStatsMaxAge = TimeSpan.FromMinutes(20);
+        private static readonly PoolNetworkPercRecorder poolNetworkPercRecorder = new PoolNetworkPercRecorder();
 
         public void InsertPoolStats(IDbConnection con, IDbTransaction tx, PoolStats stats)
         {
@@ -77,18 +85,47 @@ namespace MiningCore.Persistence.Postgres.Repositories
             con.Execute(query, mapped, tx);
         }
 
+        public void InsertPoolNetworkPercentageStats(IDbConnection con, IDbTransaction tx,
+            PoolNetworkPercentageStats stats)
+        {
+            logger.LogInvoke();
+            var mapped = mapper.Map<Entities.PoolNetworkPercentageStats>(stats);
+
+            var query = "INSERT INTO poolnetworkpercentagestats(poolid, networkpercentage) " +
+                        "VALUES(@poolid, @networkpercentage)";
+
+            con.Execute(query, mapped, tx);
+        }
+
+        
         public PoolStats GetLastPoolStats(IDbConnection con, string poolId)
         {
             logger.LogInvoke();
+            /*var query = "SELECT ps.*," +
+                        "pnps.networkpercentage as poolnetworkpercentage " +
+                        "FROM poolstats ps " +
+                        "INNER JOIN poolnetworkpercentagestats pnps " +
+                        "ON pnps.poolid = ps.poolid " +      
+                        "WHERE pnps.poolid = @poolId " +
+                        "AND pnps.created = " +
+                            "(SELECT MAX(created) FROM poolnetworkpercentagestats " +
+                            "WHERE pnps.poolid = @poolId )" +
+                        "ORDER BY created DESC FETCH NEXT 1 ROWS ONLY";
+*/
 
-            var query = "SELECT * FROM poolstats WHERE poolid = @poolId ORDER BY created DESC FETCH NEXT 1 ROWS ONLY";
+            var query = "SELECT * FROM poolstats WHERE poolid = @poolId " +
+                        "ORDER BY created DESC FETCH NEXT 1 ROWS ONLY";
 
             var entity = con.QuerySingleOrDefault<Entities.PoolStats>(query, new { poolId });
             if (entity == null)
                 return null;
+            
+            // insert the pool network percentage
+            entity.PoolNetworkPercentage = poolNetworkPercRecorder.ToUIPoolNetworkPercentage();
 
             return mapper.Map<PoolStats>(entity);
         }
+        
 
         public decimal GetTotalPoolPayments(IDbConnection con, string poolId)
         {

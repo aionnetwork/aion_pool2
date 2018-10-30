@@ -46,7 +46,9 @@ namespace MiningCore.Persistence.Model
         public long BlockHeight { get; set; }
         public int ConnectedPeers { get; set; }
         public int SharesPerSecond { get; set; }
+        public double PoolNetworkPercentage { get; set; }
 
         public DateTime Created { get; set; }
     }
+   
 }

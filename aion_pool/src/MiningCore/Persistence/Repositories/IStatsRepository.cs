@@ -22,7 +22,11 @@ using System;
 using System.Data;
 using MiningCore.Persistence.Model;
 using MiningCore.Persistence.Model.Projections;
+using MiningCore.Persistence.Postgres.Entities;
 using MinerStats = MiningCore.Persistence.Model.Projections.MinerStats;
+using MinerWorkerPerformanceStats = MiningCore.Persistence.Model.MinerWorkerPerformanceStats;
+using PoolStats = MiningCore.Persistence.Model.PoolStats;
+using PoolValueStat = MiningCore.Persistence.Model.PoolValueStat;
 
 namespace MiningCore.Persistence.Repositories
 {
@@ -30,6 +34,8 @@ namespace MiningCore.Persistence.Repositories
     {
         void InsertPoolStats(IDbConnection con, IDbTransaction tx, PoolStats stats);
         void InsertMinerWorkerPerformanceStats(IDbConnection con, IDbTransaction tx, MinerWorkerPerformanceStats stats);
+        void InsertPoolNetworkPercentageStats(IDbConnection con, IDbTransaction tx, PoolNetworkPercentageStats stats); 
+            
         PoolStats GetLastPoolStats(IDbConnection con, string poolId);
         decimal GetTotalPoolPayments(IDbConnection con, string poolId);
         PoolStats[] GetPoolPerformanceBetweenHourly(IDbConnection con, string poolId, DateTime start, DateTime end);
@@ -40,6 +46,7 @@ namespace MiningCore.Persistence.Repositories
         WorkerPerformanceStatsContainer[] GetMinerPerformanceBetweenDaily(IDbConnection con, string poolId, string miner, DateTime start, DateTime end);
         PoolValueStat[] GetPoolConnectedMiners(IDbConnection con, string poolId, DateTime start, DateTime end, StatsGranularity granularity);
         PoolValueStat[] GetPoolHashrate(IDbConnection con, string poolId, DateTime start, DateTime end, StatsGranularity granularity);
-        PoolValueStat[] GetPoolNetworkPercentage(IDbConnection con, string poolId, DateTime start, DateTime end, StatsGranularity granularity);
+        PoolValueStat[] GetPoolNetworkPercentage(IDbConnection con, string poolId, DateTime start, DateTime end, StatsGranularity granularity);       
+
     }
 }

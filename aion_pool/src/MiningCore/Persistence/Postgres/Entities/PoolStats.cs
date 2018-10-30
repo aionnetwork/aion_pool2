@@ -39,7 +39,19 @@ namespace MiningCore.Persistence.Postgres.Entities
         public long BlockHeight { get; set; }
         public int ConnectedPeers { get; set; }
         public int SharesPerSecond { get; set; }
-
+        public double PoolNetworkPercentage { get; set; }
+        
         public DateTime Created { get; set; }
     }
+    
+    public class PoolNetworkPercentageStats
+    {
+      
+        //public long Id { get; set; }
+        public string PoolId { get; set; }
+        public double NetworkPercentage { get; set; }
+        //public DateTime Created { get; set; }
+    
+    }
+    
 }

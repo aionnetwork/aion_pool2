@@ -28,5 +28,7 @@ namespace MiningCore.Mining
         public int ConnectedMiners { get; set; }
         public double PoolHashrate { get; set; }
         public int SharesPerSecond { get; set; }
+        public double NetworkDifficulty { get; set; }
+        public double PoolNetworkPercentage { get; set; }
     }
 }

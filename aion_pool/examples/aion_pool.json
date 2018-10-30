@@ -72,6 +72,8 @@
       "jobRebroadcastTimeout": 10,
   
       "clientConnectionTimeout": 600,
+
+      "hashratePercentageCalcInterval": 40,
   
       "banning": {
         "enabled": true,

@@ -33,6 +33,7 @@ using Autofac;
 using AutoMapper;
 using MiningCore.Banning;
 using MiningCore.Blockchain;
+using MiningCore.Blockchain.Aion;
 using MiningCore.Configuration;
 using MiningCore.Extensions;
 using MiningCore.Messaging;
@@ -312,7 +313,7 @@ Network Connected:      {blockchainStats?.NetworkType}
 Detected Reward Type:   {blockchainStats?.RewardType}
 Current Block Height:   {blockchainStats?.BlockHeight}
 Current Connect Peers:  {blockchainStats?.ConnectedPeers}
-Network Difficulty:     {blockchainStats?.NetworkDifficulty}
+Network Difficulty:     {FormatUtil.FormatDifficulty(blockchainStats != null ? blockchainStats.NetworkDifficulty: AionUtils.getNetworkDifficulty())}
 Network Hash Rate:      {FormatUtil.FormatHashrate(blockchainStats != null ? blockchainStats.NetworkHashrate : 0)}
 Stratum Port(s):        {(poolConfig.Ports?.Any() == true ? string.Join(", ", poolConfig.Ports.Keys) : string.Empty )}
 Pool Fee:               {(poolConfig.RewardRecipients?.Any() == true ? poolConfig.RewardRecipients.Sum(x => x.Percentage) : 0)}%

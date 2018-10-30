@@ -28,5 +28,6 @@ namespace MiningCore.DaemonInterface
         public JsonRpcException Error { get; set; }
         public T Response { get; set; }
         public AuthenticatedNetworkEndpointConfig Instance { get; set; }
+        public string DifficultyResponse { get; set; }
     }
 }

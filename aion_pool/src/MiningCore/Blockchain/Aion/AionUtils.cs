@@ -1,6 +1,11 @@
 using System.Numerics;
 using System.Linq;
 using System;
+using MiningCore.DaemonInterface;
+using MiningCore.Persistence.Postgres.Entities;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using NLog;
 
 namespace MiningCore.Blockchain.Aion
 {
@@ -64,5 +69,26 @@ namespace MiningCore.Blockchain.Aion
             return new string(c);
         }
         
+        public static double getNetworkDifficulty()
+        {
+            JsonSerializerSettings serializerSettings = null;
+            DaemonClient daemonClient = new DaemonClient(serializerSettings);
+            var response = daemonClient.ExecuteStringResponseCmdSingleAsync(AionCommands.GetDifficulty).Result;
+            try
+            {
+                double output = (double)Convert.ToInt32(response, 16);
+                return output;
+            }
+            catch
+            {
+                Console.WriteLine($"Network Difficulty Cast error: {response}");
+            }
+
+            return 0;
+        }
+       
+        
     }
+    
+    
 }
