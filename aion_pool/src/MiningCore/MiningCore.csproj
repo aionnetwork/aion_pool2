@@ -30,6 +30,7 @@
     <EmbeddedResource Remove="DataAccess\**" />
     <None Remove="Blockchain\Bitcoin\Transactions\**" />
     <None Remove="DataAccess\**" />
+    <Compile Remove="Blockchain\Aion\DaemonResponses\GetTransactionReceiptOptimizedResponse.cs" />
   </ItemGroup>
 
   <ItemGroup>

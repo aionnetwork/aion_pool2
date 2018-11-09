@@ -32,10 +32,19 @@
     <None Update="xunit.runner.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Remove="Blockchain\Aion\**" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="JsonRpc\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Blockchain\Aion\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Blockchain\Aion\**" />
   </ItemGroup>
 
 </Project>

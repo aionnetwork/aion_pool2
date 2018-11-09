@@ -48,6 +48,7 @@ using Newtonsoft.Json.Linq;
 using NLog;
 using Contract = MiningCore.Contracts.Contract;
 using System.Runtime.CompilerServices;
+using MiningCore.Blockchain.Aion.DaemonResponses;
 
 namespace MiningCore.DaemonInterface
 {
@@ -205,6 +206,9 @@ namespace MiningCore.DaemonInterface
 
             var task = BuildRequestTask(endPoints.First(), method, payload, payloadJsonSerializerSettings);
             await task;
+            
+            //Console.WriteLine(task.Result.Result.ToString());
+            //var res = JsonConvert.DeserializeObject<TransactionReceiptList>(task.Result.Result.ToString());
 
             var result = MapDaemonResponse<TResponse>(0, task);
             return result;

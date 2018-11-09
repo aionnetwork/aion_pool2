@@ -148,7 +148,7 @@ namespace MiningCore.Blockchain.Aion
                             block.Reward = AionUtils.calculateReward((long) block.BlockHeight);
 
                             if (extraConfig?.KeepTransactionFees == false && blockInfo.Transactions?.Length > 0)
-                                block.Reward += await GetTxRewardAsync(blockInfo); // tx fees
+                                block.Reward += await GetTxRewardAsyncOptimized(blockInfo); // tx fees
 
                             logger.Info(() => $"[{LogCategory}] Unlocked block {block.BlockHeight} worth {FormatAmount(block.Reward)}");
                         }
@@ -276,7 +276,7 @@ namespace MiningCore.Blockchain.Aion
                 .ToArray();
 
             var results = await daemon.ExecuteBatchAnyAsync(batch);
-
+            
             if (results.Any(x => x.Error != null))
                 throw new Exception($"Error fetching tx receipts: {string.Join(", ", results.Where(x => x.Error != null).Select(y => y.Error.Message))}");
 
@@ -288,6 +288,27 @@ namespace MiningCore.Blockchain.Aion
             var result = blockInfo.Transactions.Sum(x => (ulong)gasUsed[x.Hash] * ((decimal)x.GasPrice / AionConstants.Wei));
 
             return result;
+        }
+
+        /*
+         * Uses the optimized version of getting tx receipts (DOES NOT INCLUDE CumulativeGasUsed but is SIGNIFICANTLY more efficient)
+         */
+        private async Task<decimal> GetTxRewardAsyncOptimized(DaemonResponses.Block blockInfo)
+        {
+            // Optimized call
+            var results = await daemon.ExecuteCmdSingleAsync<List<TransactionReceipt>>(AionCommands.getTransactionReceiptListByBlockHash, new[]{blockInfo.Hash}, null);
+
+            if(results.Error != null)
+                throw new Exception($"Error fetching tx receipts for: {blockInfo.Hash}");
+            
+            decimal totalTxReward = 0.0m;
+            
+            foreach (TransactionReceipt t in results.Response)
+            {
+                totalTxReward += (ulong)t.GasUsed * ((decimal)t.GasPrice / AionConstants.Wei);
+            }
+
+            return totalTxReward;
         }
 
         private async Task<string> Payout(Balance balance)
