@@ -114,6 +114,8 @@ namespace MiningCore.Crypto.Hashing.Equihash
                 {
                     fixed(byte *s = solution)
                     {
+                        Boolean b = LibMultihash.equihash210_verify(h, header.Length, s, solution.Length);
+                        logger.Error(() => $"AAYUSH: returning from here {b}");
                         return LibMultihash.equihash210_verify(h, header.Length, s, solution.Length);
                     }
                 }

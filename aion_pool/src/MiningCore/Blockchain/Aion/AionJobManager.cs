@@ -300,12 +300,18 @@ namespace MiningCore.Blockchain.Aion
 
             if(job != null)
             {
+                string hashString = job.BlockTemplate.HeaderHash;
+            if (hashString.StartsWith("0x"))
+                hashString = hashString.Substring(2);
+                string targetString = job.BlockTemplate.Target;
+            if (targetString.StartsWith("0x"))
+                targetString = targetString.Substring(2);
                 return new object[]
                 {
                     job.Id,
                     true, // clean job
-                    job.BlockTemplate.Target,
-                    job.BlockTemplate.HeaderHash
+                   targetString,
+                    hashString
                 };
             }
 

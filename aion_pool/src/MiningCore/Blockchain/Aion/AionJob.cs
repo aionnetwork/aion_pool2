@@ -122,6 +122,7 @@ namespace MiningCore.Blockchain.Aion
             var headerBytes = SerializeHeader(nonce);
 
             // verify solution
+            logger.Error(() => $"AAYUSH: {nonce}\n{solution}");
             if (!equihash.Verify210(headerBytes, solutionBytes))
                 throw new StratumException(StratumError.Other, "invalid solution");
 
@@ -186,6 +187,7 @@ namespace MiningCore.Blockchain.Aion
         private byte[] SerializeHeader(string nonce)
         {
             var blockHeader = BlockTemplate.HeaderHash + nonce;
+            logger.Error(() => $"Header formed is: {BlockTemplate.HeaderHash}");
 
             return blockHeader.HexToByteArray();
         }
