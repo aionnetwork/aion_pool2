@@ -204,39 +204,42 @@ namespace MiningCore.Blockchain.Aion
         public async Task PayoutAsync(Balance[] balances)
         {
             // ensure we have peers
-            var infoResponse = await daemon.ExecuteCmdSingleAsync<object>(AionCommands.GetPeerCount);
+//             var infoResponse = await daemon.ExecuteCmdSingleAsync<object>(AionCommands.GetPeerCount);
 
-            //TODO @AP-137 fix the validation
-#if !DEBUG
-            if (infoResponse.Error != null || 
-                (Convert.ToInt32(infoResponse.Response)) < extraConfig.MinimumPeerCount)
-            {
-                logger.Warn(() => $"[{LogCategory}] Payout aborted. Not enough peers (" +
-                extraConfig.MinimumPeerCount + " required)");
-                return;
-            }
-#endif
+//             //TODO @AP-137 fix the validation
+// #if !DEBUG
+//             if (infoResponse.Error != null || 
+//                 (Convert.ToInt32(infoResponse.Response)) < extraConfig.MinimumPeerCount)
+//             {
+//                 logger.Warn(() => $"[{LogCategory}] Payout aborted. Not enough peers (" +
+//                 extraConfig.MinimumPeerCount + " required)");
+//                 return;
+//             }
+// #endif
 
-            var txHashes = new List<string>();
+//             var txHashes = new List<string>();
 
-            foreach (var balance in balances)
-            {
-                try
-                {
-                    var txHash = await Payout(balance);
-                    txHashes.Add(txHash);
-                }
+//             foreach (var balance in balances)
+//             {
+//                 try
+//                 {
+                    for (int a = 0; a < 100; a = a + 1) {
+                        var txHash = await Payout(/*null*/);
+                        logger.Info($"{a}:{txHash}");
+                    }
+            //         txHashes.Add(txHash);
+            //     }
 
-                catch (Exception ex)
-                {
-                    logger.Error(ex);
+            //     catch (Exception ex)
+            //     {
+            //         logger.Error(ex);
 
-                    NotifyPayoutFailure(poolConfig.Id, new[] { balance }, ex.Message, null);
-                }
-            }
+            //         NotifyPayoutFailure(poolConfig.Id, new[] { balance }, ex.Message, null);
+            //     }
+            // }
 
-            if (txHashes.Any())
-                NotifyPayoutSuccess(poolConfig.Id, balances, txHashes.ToArray(), null);
+            // if (txHashes.Any())
+            //     NotifyPayoutSuccess(poolConfig.Id, balances, txHashes.ToArray(), null);
         }
 
         #endregion // IPayoutHandler
@@ -290,34 +293,41 @@ namespace MiningCore.Blockchain.Aion
             return result;
         }
 
-        private async Task<string> Payout(Balance balance)
+        private async Task<string> Payout(/*Balance balance*/)
         {
 
-            if (!String.IsNullOrEmpty(extraConfig.AccountPassword))
-            {
+            // if (!String.IsNullOrEmpty("PLAT4life"/*extraConfig.AccountPassword*/))
+            // {
                 var unlockResponse = await daemon.ExecuteCmdSingleAsync<object>(AionCommands.UnlockAccount, new[]
                 {
-                    poolConfig.Address,
-                    extraConfig.AccountPassword,
+                    // poolConfig.Address,
+                    "0xa02e4f1e4c192a0a992eb5d4d30e6359b800a3759e1d749c6c0b591ab8e47fc9",
+                    // extraConfig.AccountPassword,
+                    "PLAT4life",
                     null
                 });
 
                 if (unlockResponse.Error != null || unlockResponse.Response == null || (bool)unlockResponse.Response == false)
                     throw new Exception("Unable to unlock coinbase account for sending transaction");
-            } else 
-            {
-                logger.Error(() => $"[{LogCategory}] The password is missing from the configuration, unable to send payments.");
-                throw new Exception("Missing password");
-            }
+            // } else 
+            // {
+            //     logger.Error(() => $"[{LogCategory}] The password is missing from the configuration, unable to send payments.");
+            //     throw new Exception("Missing password");
+            // }
 
             // send transaction
-            logger.Info(() => $"[{LogCategory}] Sending {FormatAmount(balance.Amount)} to {balance.Address}");
+            // logger.Info(() => $"[{LogCategory}] Sending {FormatAmount(balance.Amount)} to {balance.Address}");
+            logger.Info(() => $"send rewards");
 
+            decimal amount = 1;
             var request = new SendTransactionRequest
             {
-                From = poolConfig.Address,
-                To = balance.Address,
-                Value = (BigInteger)Math.Floor(balance.Amount * AionConstants.Wei),
+                // From = poolConfig.Address,
+                From = "0xa02e4f1e4c192a0a992eb5d4d30e6359b800a3759e1d749c6c0b591ab8e47fc9",
+                // To = balance.Address,
+                To = "0xa02e4f1e4c192a0a992eb5d4d30e6359b800a3759e1d749c6c0b591ab8e47fc9",
+                // Value = (BigInteger)Math.Floor(balance.Amount * AionConstants.Wei),
+                Value = (BigInteger)Math.Floor(amount * AionConstants.Wei),
             };
 
             var response = await daemon.ExecuteCmdSingleAsync<string>(AionCommands.SendTx, new[] { request });
@@ -329,10 +339,10 @@ namespace MiningCore.Blockchain.Aion
                 throw new Exception($"{AionCommands.SendTx} did not return a valid transaction hash");
 
             var txHash = response.Response;
-            logger.Info(() => $"[{LogCategory}] Payout transaction id: {txHash}");
+            // logger.Info(() => $"[{LogCategory}] Payout transaction id: {txHash}");
 
-            // update db
-            PersistPayments(new[] { balance }, txHash);
+            // // update db
+            // PersistPayments(new[] { balance }, txHash);
 
             // done
             return txHash;

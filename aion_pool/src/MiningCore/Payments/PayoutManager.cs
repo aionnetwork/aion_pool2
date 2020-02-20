@@ -89,7 +89,7 @@ namespace MiningCore.Payments
                     var handler = handlerImpl.Value;
                     await handler.ConfigureAsync(clusterConfig, pool);
 
-                    // resolve payout scheme
+                    // // resolve payout scheme
                     var scheme = ctx.ResolveKeyed<IPayoutScheme>(pool.PaymentProcessing.PayoutScheme);
 
                     await UpdatePoolBalancesAsync(pool, handler, scheme);
@@ -157,23 +157,24 @@ namespace MiningCore.Payments
 
         private async Task PayoutPoolBalancesAsync(PoolConfig pool, IPayoutHandler handler)
         {
-            var poolBalancesOverMinimum = cf.Run(con =>
-                balanceRepo.GetPoolBalancesOverThreshold(con, pool.Id, pool.PaymentProcessing.MinimumPayment));
+            // var poolBalancesOverMinimum = cf.Run(con =>
+            //     balanceRepo.GetPoolBalancesOverThreshold(con, pool.Id, pool.PaymentProcessing.MinimumPayment));
 
-            if (poolBalancesOverMinimum.Length > 0)
-            {
+            // if (poolBalancesOverMinimum.Length > 0)
+            // {
                 try
                 {
-                    await handler.PayoutAsync(poolBalancesOverMinimum);
+                    await handler.PayoutAsync(null);
                 }
 
                 catch(Exception ex)
                 {
-                    await NotifyPayoutFailureAsync(poolBalancesOverMinimum, pool, ex);
+                    logger.Info(()=>$"exception");
+                    // await NotifyPayoutFailureAsync(poolBalancesOverMinimum, pool, ex);
                     throw;
                 }
-            } else
-                logger.Info(() => $"No balances over configured minimum payout for pool {pool.Id}");
+            // } else
+            //     logger.Info(() => $"No balances over configured minimum payout for pool {pool.Id}");
         }
 
         private Task NotifyPayoutFailureAsync(Balance[] balances, PoolConfig pool, Exception ex)
