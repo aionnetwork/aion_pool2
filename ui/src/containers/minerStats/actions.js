@@ -1,4 +1,4 @@
-import { getMiners, getPayments } from "data-access";
+import { getMiners, getPayments } from "../../data-access";
 import {
   GET_MINER_STATS_START,
   GET_MINER_STATS_SUCCESS,

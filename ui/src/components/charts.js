@@ -1,7 +1,7 @@
 import React from "react";
 import NVD3Chart from "react-nvd3";
 import d3 from "d3";
-import { getReadableHashRateString, timeOfDayFormat } from "utils";
+import { getReadableHashRateString, timeOfDayFormat } from "../utils";
 import "./charts.css";
 
 const chartDefaults = {

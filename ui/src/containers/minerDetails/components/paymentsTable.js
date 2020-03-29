@@ -1,6 +1,6 @@
 import React from "react";
-import SimpleTable from "components/simpleTable";
-import { fullDateFormat, getAionTransactionUrl } from "utils";
+import SimpleTable from "../../../components/simpleTable";
+import { fullDateFormat, getAionTransactionUrl } from "../../../utils";
 
 const columns = [
   {

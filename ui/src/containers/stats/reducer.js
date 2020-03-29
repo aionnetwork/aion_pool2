@@ -1,5 +1,5 @@
 import { handleActions } from "redux-actions";
-import { convertToTimestamp } from "utils";
+import { convertToTimestamp } from "../../utils";
 import {
   GET_POOL_STATS_START,
   GET_POOL_STATS_SUCCESS,

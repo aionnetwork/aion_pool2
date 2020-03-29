@@ -1,4 +1,4 @@
-import { getPools as getPoolsApi } from "data-access";
+import { getPools as getPoolsApi } from "../../data-access";
 import {
   GET_POOLS_START,
   GET_POOLS_SUCCESS,

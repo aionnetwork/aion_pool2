@@ -1,5 +1,5 @@
 import { handleActions } from "redux-actions";
-import { convertToTimestamp } from "utils";
+import { convertToTimestamp } from "../../utils";
 import {
   GET_MINER_DETAILS_START,
   GET_MINER_DETAILS_SUCCESS,

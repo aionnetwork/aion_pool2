@@ -2,7 +2,7 @@ import {
   getMinerPerformance,
   getMinerDetails,
   getMinerPayments
-} from "data-access";
+} from "../../data-access";
 import {
   GET_MINER_DETAILS_START,
   GET_MINER_DETAILS_SUCCESS,

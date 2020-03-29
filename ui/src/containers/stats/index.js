@@ -7,7 +7,7 @@ import {
   HashRateChart,
   IntegerChart,
   PercentageChart
-} from "components/charts";
+} from "../../components/charts";
 
 class Stats extends React.Component {
   componentWillMount() {

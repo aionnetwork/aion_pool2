@@ -8,7 +8,7 @@ import MinerStatsBoxes from "./components/minerStatsBoxes";
 import PaymentsTable from "./components/paymentsTable";
 import MinerHashRate from "./components/minerHashRate";
 import { Spinner } from "@blueprintjs/core";
-import { getAionDashboardAccountUrl } from "utils";
+import { getAionDashboardAccountUrl } from "../../utils";
 
 class WorkerStats extends Component {
   componentWillMount() {

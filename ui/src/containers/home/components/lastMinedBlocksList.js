@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import SimpleTable from "components/simpleTable";
+import SimpleTable from "../../../components/simpleTable";
 import { Link } from "react-router-dom";
 import { Spinner } from "@blueprintjs/core";
 

@@ -1,6 +1,6 @@
 import React from "react";
-import { getReadableHashRateString } from "utils";
-import StatsBoxes from "components/statsBoxes";
+import { getReadableHashRateString } from "../../../utils";
+import StatsBoxes from "../../../components/statsBoxes";
 
 export default ({
   hashRate,

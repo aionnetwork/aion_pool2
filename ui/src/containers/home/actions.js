@@ -1,4 +1,4 @@
-import { getLastBlocks, getCoinPrice } from "data-access";
+import { getLastBlocks, getCoinPrice } from "../../data-access";
 import {
   GET_HOME_STATS_START,
   GET_HOME_STATS_SUCCESS,

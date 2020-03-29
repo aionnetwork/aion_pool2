@@ -1,5 +1,5 @@
 import React from "react";
-import StatsBoxes from "components/statsBoxes";
+import StatsBoxes from "../../../components/statsBoxes";
 import get from "lodash.get";
 
 export default ({ isLoadingMinerData, minerDetails }) => {

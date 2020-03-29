@@ -1,5 +1,5 @@
 import React from "react";
-import { HashRateChart } from "components/charts";
+import { HashRateChart } from "../../../components/charts.js";
 import get from "lodash.get";
 
 export default ({ hashrate }) =>
