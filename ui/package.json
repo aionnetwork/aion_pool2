@@ -14,7 +14,7 @@
     "@blueprintjs/docs-theme": "^2.1.2",
     "@blueprintjs/table": "^2.1.1",
     "blueprint-css": "^3.0.0-beta.0",
-    "cross-fetch": "^2.2.0",
+    "cross-fetch": "^3.1.5",
     "lodash.get": "^4.4.2",
     "node-sass-chokidar": "^1.2.2",
     "npm-run-all": "^4.1.2",
